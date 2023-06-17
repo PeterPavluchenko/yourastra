@@ -1,0 +1,200 @@
+.first-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 894px;
+}
+
+.small-dot {
+    margin: 1.5px;
+    height: 3px;
+    width: 3px;
+    background-color: var(--past-circle-orange);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.full-row {
+    display: flex;
+    flex-direction: row;
+    width: 894px;
+}
+
+.years-scale {
+    position: relative;
+    right: 385px;
+    top: 68px;
+}
+  
+.years-scale .small-dot {
+    position: relative;
+    bottom: 2px;
+}
+
+.the-history-title {
+    margin-top: 0;
+}
+
+.vertical-dots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.first-dot {
+    margin: 5px 0 1.5px 0;
+    height: 3px;
+    width: 3px;
+    background-color: rgb(230, 230, 230);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.last-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 894px;
+}
+
+.vertical-dots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.last-dot {
+    margin: 1.5px 0 5px 0;
+    height: 3px;
+    width: 3px;
+    background-color: rgb(230, 230, 230);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.main-rectangle {
+    width: 894px;
+    height: 50px;
+    background-color: #FFECE4;
+    margin: 30px 0 20px;
+    position: relative;
+}
+
+.second-rectangle {
+    width: 536.4px;
+    height: 30px;
+    background-color: #f0c1ad;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.third-rectangle {
+    width: 89.4px;
+    height: 20px;
+    background-color: #c47959;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.fourth-rectangle {
+    width: 25px;
+    height: 10px;
+    background-color: #9b4b29;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.fifth-rectangle {
+    width: 3.5px;
+    height: 3.5px;
+    background-color: #f0e6e3;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.main-rectangle-young {
+    width: 894px;
+    height: 50px;
+    background-color: #FFECE4;
+    margin: 10px 0 30px;
+    position: relative;
+}
+  
+.second-rectangle-young {
+    width: 683.4px;
+    height: 30px;
+    background-color: #f0c1ad;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.third-rectangle-young {
+    width: 583.7px;
+    height: 20px;
+    background-color: #d1957b;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.fourth-rectangle-young {
+    width: 296.6px;
+    height: 15px;
+    background-color: #c77754;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.fifth-rectangle-young {
+    width: 234.2px;
+    height: 12px;
+    background-color: rgb(173, 94, 69);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.sixth-rectangle-young {
+    width: 113.5px;
+    height: 9px;
+    background-color: rgb(150, 77, 55);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.second-world-war-rectangle {
+    width: 33.9px;
+    height: 6px;
+    background-color: rgb(124, 49, 26);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.my-past-life-rectangle {
+    width: 10.5px;
+    height: 50px;
+    background-color: #da6138;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: .6;
+}
+  
+.my-future-life-rectangle {
+    width: 24px;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    left: 34px;
+    opacity: .3;
+    background-color: #eb8d71;
+    box-sizing: border-box;
+}
