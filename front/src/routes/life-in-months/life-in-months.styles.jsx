@@ -26,6 +26,11 @@ export const ThisMonthCircleWrapper = styled.div`
   a {
     height: 30px;
     width: 30px;
+    :hover {
+      position: relative;
+      bottom: 9px;
+      left: -9px;
+    }
   }
 
   :hover {

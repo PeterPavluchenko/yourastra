@@ -1,15 +1,73 @@
 .header {
     display: flex;
+    position: relative;
+    width: 100%;
     justify-content: center;
     align-items: center;
+    padding: 10px 15px;
     font-size: 17px;
+    box-sizing: border-box;
 
-    div {
+    .logo-container {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 6px; 
         margin: 25px auto 20px;
+    }
+
+    .menu-container {
+        position: absolute;
+        top: 55px;
+        right: 60px;
+        width: 135px;
+    }
+
+    .menu-icon {
+        position: absolute;
+        top: 50%;
+        right: 36px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        right: 0;
+        z-index: 1000;
+        background-color: #3c4167;
+        border-radius: 8px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                a {
+                    display: block;
+                    border-radius: 8px;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    color: white;
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.2);
+                    }
+                }
+            }
+        }
+    }
+
+    .logo-svg {
+        height: 45px;
+        width: 45px;
+        position: relative;
+        top: 4px;
     }
 
     .logo-svg {

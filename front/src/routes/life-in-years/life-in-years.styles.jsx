@@ -26,6 +26,18 @@ export const ThisYearCircleWrapper = styled.div`
   a {
     height: 55px;
     width: 55px;
+
+    :hover {
+        position: relative;
+        bottom: 20px;
+        left: -19px;
+    }
+  }
+
+  :hover {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
   }
 `;
 
