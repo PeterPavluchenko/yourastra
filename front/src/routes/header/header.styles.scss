@@ -2,18 +2,22 @@
     display: flex;
     position: relative;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
     font-size: 17px;
     box-sizing: border-box;
+    height: 75px;
 
     .logo-container {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         gap: 6px; 
-        margin: 25px auto 20px;
+        margin: 0;
+        position: relative;
+        top: 10px;
+        left: 60px;
     }
 
     .menu-container {

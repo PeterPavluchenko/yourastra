@@ -5,7 +5,7 @@ const Header = () => {
                 <div className="small-dot"></div> = 500,000 years
             </div>
             
-            <div>The Big Bang</div>
+            <div className="big-bang-title">The Big Bang</div>
             <div>∼13.787 billion years ago</div>
             <div className="vertical-dots">
                 <div className="first-dot"></div>

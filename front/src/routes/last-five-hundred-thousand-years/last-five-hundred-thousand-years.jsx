@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import {
-  WeeksContainer,
-  WeeksWrapper,
-  OneWeekPastCircle,
-  ThisWeekCircleWrapper,
-  ThisWeekCircle,
-  OneWeekFutureCircle,
-} from "./life-in-weeks.styles";
+    YearsContainer,
+    WeeksWrapper,
+    OneWeekPastCircle,
+    ThisWeekCircleWrapper,
+    ThisWeekCircle,
+    OneWeekFutureCircle,
+} from "./last-five-hundred-thousand-years.styles";
 
-const LifeInWeeks = () => {
+const LastFiveHundredThousandYears = () => {
   const birthDate = new Date("1997-08-26");
   const currentDate = new Date();
   const totalWeeks = 4174;
@@ -28,8 +28,8 @@ const LifeInWeeks = () => {
   let myWeeks = generateWeeks();
 
   return (
-    <WeeksContainer>
-      <h1>4,174 weeks</h1>
+    <YearsContainer>
+      <h1>5,000 centuries</h1>
       <WeeksWrapper>
         {myWeeks.map((week, i) => {
           if (i < weeksSinceBirth)
@@ -45,8 +45,8 @@ const LifeInWeeks = () => {
           else return <OneWeekFutureCircle key={i} />;
         })}
       </WeeksWrapper>
-    </WeeksContainer>
+    </YearsContainer>
   );
 };
 
-export default LifeInWeeks;
+export default LastFiveHundredThousandYears;

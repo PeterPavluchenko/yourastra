@@ -11,7 +11,7 @@ import {
 const LifeInDays = () => {
   const birthDate = new Date("1997-08-26");
   const endOfLifeDate = new Date(birthDate);
-  endOfLifeDate.setFullYear(birthDate.getFullYear() + 80); // 80 years from birth
+  endOfLifeDate.setFullYear(birthDate.getFullYear() + 80); 
   const currentDate = new Date();
 
   const daysSinceBirth = Math.floor(
@@ -34,7 +34,7 @@ const LifeInDays = () => {
 
   return (
     <DaysContainer>
-      <h1>{totalDays} days</h1>
+      <h1>{totalDays.toLocaleString('en-US')} days</h1>
       <DaysWrapper>
         {myDays.map((day, i) => {
           if (i < daysSinceBirth)
