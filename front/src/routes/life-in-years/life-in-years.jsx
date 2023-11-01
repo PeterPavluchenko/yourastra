@@ -8,8 +8,8 @@ import {
   OneYearFutureCircle
 } from "./life-in-years.styles";
 
-const LifeInYears = () => {
-  const yearOfBirth = 1997;
+const LifeInYears = ({ user }) => {
+  const yearOfBirth = user ? new Date(user.birthday).getFullYear() : 1997;
 
   const rangeOfYears = (start, end) =>
     Array(end - start + 1)

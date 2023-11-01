@@ -44,6 +44,11 @@ const Header = () => {
           <div className="dropdown-menu" ref={dropdownRef}>
             <ul>
               <li>
+                <Link to="/auth" onClick={() => setDropdownVisible(false)}>
+                  Authentication
+                </Link>
+              </li>
+              <li>
                 <Link to="/" onClick={() => setDropdownVisible(false)}>
                   Universe
                 </Link>
