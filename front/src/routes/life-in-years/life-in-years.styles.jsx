@@ -10,53 +10,32 @@ export const YearsWrapper = styled.div`
   grid-template-columns: repeat(10, 80px);
 `;
 
-export const OneYearPastCircle = styled.div`
+export const CircleBase = styled.div`
   margin: 20px;
   height: 40px;
   width: 40px;
-  background-color: var(--past-circle-orange);
   border-radius: 50%;
   display: inline-block;
+  transition: all 0.3s; 
+  
+  &:hover {
+    transform: scale(1.5); 
+  }
+`;
+
+export const OneYearPastCircle = styled(CircleBase)`
+  background-color: var(--past-circle-orange);
 `;
 
 export const ThisYearCircleWrapper = styled.div`
   position: relative;
-  height: 8px;
-
-  a {
-    height: 55px;
-    width: 55px;
-
-    :hover {
-        position: relative;
-        bottom: 20px;
-        left: -19px;
-    }
-  }
-
-  :hover {
-    height: 80px;
-    width: 80px;
-    border-radius: 50%;
-  }
 `;
 
-export const ThisYearCircle = styled.div`
-  margin: 20px;
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
+export const ThisYearCircle = styled(CircleBase)`
   background-color: #fff;
   box-shadow: var(--current-circle-glow);
 `;
 
-export const OneYearFutureCircle = styled.div`
-  margin: 20px;
-  height: 40px;
-  width: 40px;
+export const OneYearFutureCircle = styled(CircleBase)`
   background-color: rgba(255, 255, 255, .3);
-  border-radius: 50%;
-  display: inline-block;
 `;

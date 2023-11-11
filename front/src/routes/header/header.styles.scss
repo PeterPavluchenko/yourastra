@@ -9,15 +9,25 @@
     box-sizing: border-box;
     height: 75px;
 
-    .logo-container {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 6px; 
-        margin: 0;
-        position: relative;
-        top: 10px;
-        left: 60px;
+    .logo-link {
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+
+        .logo-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 6px; 
+            margin: 0;
+            position: relative;
+            top: 10px;
+            left: 60px;
+
+            * {
+                pointer-events: none;
+            }
+        }
     }
 
     .menu-container {
@@ -34,6 +44,11 @@
         transform: translateY(-50%);
         cursor: pointer;
         z-index: 1001;
+        transition: filter 0.3s ease-in-out;
+
+        &:hover {
+            filter: brightness(120%); // Increases brightness by 20% on hover
+        }
     }
 
     .dropdown-menu {

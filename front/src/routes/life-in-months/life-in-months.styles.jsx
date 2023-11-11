@@ -9,53 +9,28 @@ export const MonthsWrapper = styled.div`
   display: inline-grid;
   grid-template-columns: repeat(48, 24px);
 `;
-
-export const OneMonthPastCircle = styled.div`
+export const CircleBase = styled.div`
   margin: 6px;
   height: 12px;
   width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: transform 0.3s ease-in-out; 
+
+  &:hover {
+    transform: scale(2.5);
+  }
+`;
+
+export const OneMonthPastCircle = styled(CircleBase)`
   background-color: var(--past-circle-orange);
-  border-radius: 50%;
-  display: inline-block;
 `;
 
-export const ThisMonthCircleWrapper = styled.div`
-  position: relative;
-  height: 8px;
-
-  a {
-    height: 30px;
-    width: 30px;
-    :hover {
-      position: relative;
-      bottom: 9px;
-      left: -9px;
-    }
-  }
-
-  :hover {
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-  }
-`;
-
-export const ThisMonthCircle = styled.div`
-  margin: 6px;
-  height: 12px;
-  width: 12px;
+export const ThisMonthCircle = styled(CircleBase)`
   background-color: #fff;
-  border-radius: 50%;
-  display: inline-block;
   box-shadow: var(--current-circle-glow);
 `;
 
-export const OneMonthFutureCircle = styled.div`
-  margin: 6px;
-  height: 12px;
-  width: 12px;
-  background-color: white;
-  opacity: 0.3;
-  border-radius: 50%;
-  display: inline-block;
+export const OneMonthFutureCircle = styled(CircleBase)`
+  background-color: rgba(255, 255, 255, .3);
 `;

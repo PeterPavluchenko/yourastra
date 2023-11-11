@@ -1,14 +1,19 @@
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import {
   YearsContainer,
   YearsWrapper,
   OneYearPastCircle,
-  ThisYearCircleWrapper,
   ThisYearCircle,
   OneYearFutureCircle
 } from "./life-in-years.styles";
+import CustomTooltip from "../../components/custom-tooltip/custom-tooltip";
 
 const LifeInYears = ({ user }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipContent, setTooltipContent] = useState('');
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
   const yearOfBirth = user ? new Date(user.birthday).getFullYear() : 1997;
 
   const rangeOfYears = (start, end) =>
@@ -20,23 +25,55 @@ const LifeInYears = ({ user }) => {
 
   const currentYear = new Date().getFullYear();
 
+  const handleMouseOver = (e, year, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const rect = e.target.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + window.scrollY; 
+
+    setTooltipContent(`Year ${index + 1}: ${year}`);
+    setPosition({ x: x - 50, y: y - 65 });
+    setShowTooltip(true);
+  };
+
+  const handleMouseOut = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowTooltip(false);
+  };
+
   return (
     <YearsContainer>
       <h1>80 years</h1>
       <YearsWrapper>
         {myYears.map((year, i) => {
-          if (year < currentYear) return <OneYearPastCircle key={i} />;
-          else if (year === currentYear)
-            return (
-              <ThisYearCircleWrapper>
-                <Link to="/this-year" state={{ year: year }}>
-                  <ThisYearCircle />
-                </Link>
-              </ThisYearCircleWrapper>
-            );
-          else return <OneYearFutureCircle key={i} />;
+          const linkProps = {
+            to: `/year/${year}`,
+            state: { year: year },
+          };
+
+          let YearCircleComponent;
+          if (year < currentYear) {
+            YearCircleComponent = OneYearPastCircle;
+          } else if (year === currentYear) {
+            YearCircleComponent = ThisYearCircle;
+          } else {
+            YearCircleComponent = OneYearFutureCircle;
+          }
+
+          return (
+            <Link {...linkProps} key={i}>
+              <YearCircleComponent
+                onMouseOver={(e) => handleMouseOver(e, year, i)}
+                onMouseOut={handleMouseOut}
+              />
+            </Link>
+          );
         })}
       </YearsWrapper>
+      {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
     </YearsContainer>
   );
 };

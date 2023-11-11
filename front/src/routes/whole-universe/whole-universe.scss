@@ -68,6 +68,29 @@
     align-items: center;
 }
 
+
+.this-dot-wrapper {
+    position: relative;
+    height: 6px;
+    bottom: 8px;
+  
+    a {
+      height: 6px;
+      width: 6px;
+  
+      :hover {
+          position: relative;
+          bottom: 5px;
+      }
+    }
+  
+    :hover {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+    }
+}
+  
 .last-dot {
     margin: 1.5px 0 5px 0;
     height: 3px;
@@ -77,6 +100,7 @@
     display: inline-block;
     box-shadow: var(--current-circle-glow);
 }
+
 
 .main-rectangle {
     width: 894px;
