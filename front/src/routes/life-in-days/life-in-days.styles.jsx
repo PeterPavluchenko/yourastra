@@ -44,3 +44,18 @@ export const DayLink = styled(Link)`
     transform: scale(2.5);
   }
 `;
+
+export const DayPlaceholder = styled.div`
+  margin: 1.5px;
+  height: 3px;
+  width: 3px;
+  border-radius: 50%;
+  background-color: ${props => {
+    if (props.type === 'past') return 'var(--past-circle-orange)';
+    if (props.type === 'present') return '#fff';
+    return 'rgba(255, 255, 255, .3)';
+  }};
+  box-shadow: ${props => props.type === 'present' ? 'var(--current-circle-glow)' : 'none'};
+  display: inline-block;
+`;
+

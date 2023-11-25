@@ -1,8 +1,8 @@
 :root {
     --past-circle-orange: #DF7452;
-    --current-circle-glow: 0 0 7.5px 3.75px rgb(255, 255, 255, .3),
-                           0 0 12.5px 7.5px rgb(255, 0, 255, .3),
-                           0 0 17.5px 11.25px rgb(0, 255, 255, .3);
+    --current-circle-glow: 0 0 3.5px 1.75px rgb(255, 255, 255, .3),
+                           0 0 6px 3.5px rgb(255, 0, 255, .3),
+                           0 0 9px 5px rgb(0, 255, 255, .3);
 }
   
 textarea:focus, input:focus{
@@ -41,3 +41,18 @@ h1 {
     text-align: center;
     min-height: 100vh;
 }
+
+.spinner {
+    border: 5px solid rgba(255, 255, 255, 0.3); /* Light grey border */
+    border-top: 5px solid #3498db; /* Blue border */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  

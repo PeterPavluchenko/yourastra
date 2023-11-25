@@ -22,16 +22,22 @@ const LifeInWeeks = ({ user }) => {
   endDate.setFullYear(birthDate.getFullYear() + 80);
 
   const totalWeeks = Math.floor((endDate - birthDate) / (7 * 24 * 60 * 60 * 1000));
-  const weeksSinceBirth = Math.floor((currentDate - birthDate) / (7 * 24 * 60 * 60 * 1000));
+  const weeksSinceBirth = Math.ceil((currentDate - birthDate) / (7 * 24 * 60 * 60 * 1000));
 
   const getWeekRange = (weekIndex) => {
     const weekStart = new Date(birthDate.getTime());
+  
     if (weekIndex > 0) {
-      weekStart.setDate(birthDate.getDate() + (7 * weekIndex) - birthDate.getDay() + 1);
+      weekStart.setDate(
+        birthDate.getDate() +
+        (7 * weekIndex) - 
+        (birthDate.getDay() === 0 ? 6 : birthDate.getDay() - 1)
+      );
     }
+  
     const weekEnd = new Date(weekStart.getTime());
     weekEnd.setDate(weekStart.getDate() + 6);
-
+  
     return { start: weekStart, end: weekEnd };
   };
 
@@ -73,7 +79,7 @@ const LifeInWeeks = ({ user }) => {
   const getWeekCircleComponent = (weekIndex) => {
     if (weekIndex < weeksSinceBirth) {
       return OneWeekPastCircle;
-    } else if (weekIndex === weeksSinceBirth) {
+    } else if (weekIndex === weeksSinceBirth) { 
       return ThisWeekCircle;
     } else {
       return OneWeekFutureCircle;
@@ -95,7 +101,7 @@ const LifeInWeeks = ({ user }) => {
             onMouseOut: handleMouseOut,
           };
 
-          const WeekCircleComponent = getWeekCircleComponent(i);
+          const WeekCircleComponent = getWeekCircleComponent(i + 1);
 
           return (
             <WeekLink {...linkProps} key={i}>

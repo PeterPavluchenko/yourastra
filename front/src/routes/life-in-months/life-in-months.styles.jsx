@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 export const MonthsContainer = styled.div`
   width: 1200px;
@@ -33,4 +34,11 @@ export const ThisMonthCircle = styled(CircleBase)`
 
 export const OneMonthFutureCircle = styled(CircleBase)`
   background-color: rgba(255, 255, 255, .3);
+`;
+
+export const MonthLink = styled(Link)`
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+  margin: 6px;
 `;

@@ -6,7 +6,8 @@ import {
   OneDayPastCircle,
   ThisDayCircle,
   OneDayFutureCircle,
-  DayLink 
+  DayLink,
+  DayPlaceholder
 } from "./life-in-days.styles";
 import CustomTooltip from '../../components/custom-tooltip/custom-tooltip';
 
@@ -14,6 +15,7 @@ const LifeInDays = ({ user }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipContent, setTooltipContent] = useState('');
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [activeSection, setActiveSection] = useState(null);
 
   const birthDate = user ? new Date(user.birthday) : new Date("1997-08-26");
   const endOfLifeDate = new Date(birthDate);
@@ -37,6 +39,10 @@ const LifeInDays = ({ user }) => {
   };
 
   let myDays = generateDays();
+
+  const handleSectionMouseOver = (sectionIndex) => {
+    setActiveSection(sectionIndex);
+  };
 
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -65,10 +71,21 @@ const LifeInDays = ({ user }) => {
     setShowTooltip(false);
   };
 
-  const getDayCircleComponent = (dayIndex) => {
+  const getDayCircleComponent = (dayIndex, isInteractive) => {
+    let type = 'future';
     if (dayIndex < daysSinceBirth) {
-      return OneDayPastCircle;
+      type = 'past';
     } else if (dayIndex === daysSinceBirth) {
+      type = 'present';
+    }
+  
+    if (!isInteractive) {
+      return <DayPlaceholder type={type} key={dayIndex} onMouseOver={() => handleSectionMouseOver(Math.floor(dayIndex / 260))} />;
+    }
+  
+    if (type === 'past') {
+      return OneDayPastCircle;
+    } else if (type === 'present') {
       return ThisDayCircle;
     } else {
       return OneDayFutureCircle;
@@ -80,24 +97,23 @@ const LifeInDays = ({ user }) => {
       <h1>{totalDays.toLocaleString('en-US')} days</h1>
       <DaysWrapper>
         {myDays.map((day, i) => {
-          const linkProps = {
-            to: `/day/${i + 1}`,
-            state: { dayIndex: i + 1 },
-          };
+          const isInteractive = Math.floor(i / 260) === activeSection;
 
-          const circleProps = {
-            key: i,
+          const DayCircleComponent = getDayCircleComponent(i, isInteractive);
+          const circleProps = isInteractive ? {
             onMouseOver: (e) => handleMouseOver(e, i),
-            onMouseOut: handleMouseOut,
-          };
+            onMouseOut: handleMouseOut
+          } : {};
 
-          const DayCircleComponent = getDayCircleComponent(i);
-
-          return (
-            <DayLink {...linkProps} {...circleProps}>
+          return isInteractive ? (
+            <DayLink 
+              to={`/day/${i + 1}`}
+              state={{ dayIndex: i + 1 }}
+              key={i}
+              {...circleProps}>
               <DayCircleComponent />
             </DayLink>
-          );
+          ) : DayCircleComponent;
         })}
       </DaysWrapper>
       {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}

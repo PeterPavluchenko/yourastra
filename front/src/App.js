@@ -5,6 +5,8 @@ import WholeUniverse from "./routes/whole-universe/whole-universe.component";
 import LifeInYears from './routes/life-in-years/life-in-years';
 import LifeInMonths from './routes/life-in-months/life-in-months';
 import LifeInWeeks from './routes/life-in-weeks/life-in-weeks';
+import YearDetails from './routes/life-in-years/YearDetails/YearDetails';
+import MonthDetails from './routes/life-in-months/MonthDetails/MonthDetails';
 import WeekDetails from './routes/life-in-weeks/WeekDetails/WeekDetails';
 import DayDetails from './routes/life-in-days/DayDetails/DayDetails';
 import LifeInDays from './routes/life-in-days/life-in-days';
@@ -15,6 +17,7 @@ import PrivateRoute from './PrivateRoute';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -23,11 +26,21 @@ function App() {
     if (token && userData) {
       setUser(userData);
     }
+
+    setLoading(false);
   }, []);
 
   const handleLogin = (user) => {
     setUser(user);
   };
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -46,9 +59,19 @@ function App() {
               <LifeInYears user={user} />
             </PrivateRoute>
           } />
+          <Route path="/year/:yearIndex" element={
+            <PrivateRoute user={user}>
+                <YearDetails user={user} />
+            </PrivateRoute>
+          } />
           <Route path="/life-in-months" element={
             <PrivateRoute user={user}>
               <LifeInMonths user={user} />
+            </PrivateRoute>
+          } />
+          <Route path="/month/:year/:month" element={
+            <PrivateRoute user={user}>
+                <MonthDetails user={user} />
             </PrivateRoute>
           } />
           <Route path="/life-in-weeks" element={

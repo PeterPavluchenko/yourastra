@@ -6,6 +6,7 @@ import {
   OneMonthPastCircle,
   ThisMonthCircle,
   OneMonthFutureCircle,
+  MonthLink
 } from "./life-in-months.styles";
 import CustomTooltip from '../../components/custom-tooltip/custom-tooltip';
 
@@ -46,7 +47,7 @@ const LifeInMonths = ({ user }) => {
     const monthName = new Date(month.year, month.month - 1).toLocaleString('en-US', { month: 'long' });
 
     setTooltipContent(`Month ${index + 1}: ${monthName} ${month.year}`);
-    setPosition({ x: x - 100, y: y - 65 });
+    setPosition({ x: x - 105, y: y - 65 });
     setShowTooltip(true);
   };
 
@@ -84,9 +85,9 @@ const LifeInMonths = ({ user }) => {
           }
 
           return (
-            <Link {...linkProps} key={i}>
+            <MonthLink {...linkProps} key={i}>
               <MonthCircleComponent {...monthProps} />
-            </Link>
+            </MonthLink>
           );
         })}
       </MonthsWrapper>

@@ -50,8 +50,7 @@ const LifeInYears = ({ user }) => {
       <YearsWrapper>
         {myYears.map((year, i) => {
           const linkProps = {
-            to: `/year/${year}`,
-            state: { year: year },
+            to: `/year/${i + 1}`
           };
 
           let YearCircleComponent;
