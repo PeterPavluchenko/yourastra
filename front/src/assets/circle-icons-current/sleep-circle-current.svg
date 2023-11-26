@@ -1,0 +1,18 @@
+<svg width="59" height="59" viewBox="0 0 59 59" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="29.5" cy="29.5" r="29.5" fill="white"/>
+<path d="M42 19H17C15.3431 19 14 20.3431 14 22V24C14 25.6569 15.3486 27 17.0055 27H41.9971C43.6539 27 45 25.6569 45 24V22C45 20.3431 43.6569 19 42 19Z" fill="#181D46"/>
+<path d="M40 23V26.5H42.5H44.5V23" stroke="#181D46"/>
+<path d="M17 25C17 23.8954 17.8954 23 19 23H22.5H26C27.1046 23 28 23.8954 28 25V25C28 26.1046 27.1046 27 26 27H19C17.8954 27 17 26.1046 17 25V25V25Z" fill="white"/>
+<rect x="31" y="23" width="11" height="4" rx="2" fill="white"/>
+<path d="M17.5 25V27H27.5V25M41.5 25V27M31.5 25V27H41" stroke="white"/>
+<rect x="11" y="28" width="37" height="12" rx="3" fill="#181D46"/>
+<rect x="11" y="35" width="3" height="7" rx="0.5" fill="#181D46"/>
+<rect x="45" y="35" width="3" height="7" rx="0.5" fill="#181D46"/>
+<rect x="16" y="26" width="1" height="1" fill="white"/>
+<rect x="14" y="22" width="3" height="5" rx="0.5" fill="#181D46"/>
+<rect x="28" y="26" width="3" height="1" fill="white"/>
+<rect x="28" y="22" width="3" height="5" rx="0.5" fill="#181D46"/>
+<rect x="42" y="26" width="1" height="1" fill="white"/>
+<rect x="44" y="26" width="1" height="1" fill="white"/>
+<rect x="42" y="22" width="3" height="5" rx="0.5" fill="#181D46"/>
+</svg>

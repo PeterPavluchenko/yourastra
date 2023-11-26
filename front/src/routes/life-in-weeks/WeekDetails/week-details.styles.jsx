@@ -3,6 +3,13 @@ import { ReactComponent as SleepIcon } from "../../../assets/sleep-circle.svg";
 import { ReactComponent as RunningIcon } from "../../../assets/running-circle.svg";
 import { ReactComponent as WorkIcon } from "../../../assets/work-circle.svg";
 import { ReactComponent as VocabIcon } from "../../../assets/vocab-circle.svg";
+import { ReactComponent as ProjectIcon } from "../../../assets/project-circle.svg";
+
+import { ReactComponent as SleepIconCurrent } from "../../../assets/circle-icons-current/sleep-circle-current.svg";
+import { ReactComponent as RunningIconCurrent } from "../../../assets/circle-icons-current/running-circle-current.svg";
+import { ReactComponent as WorkIconCurrent } from "../../../assets/circle-icons-current/work-circle-current.svg";
+import { ReactComponent as VocabIconCurrent } from "../../../assets/circle-icons-current/vocab-circle-current.svg";
+import { ReactComponent as ProjectIconCurrent } from "../../../assets/circle-icons-current/project-circle-current.svg";
 
 export const WeekDetailsWrapper = styled.div`
     overflow-x: hidden;
@@ -78,6 +85,7 @@ export const PastHourCircle = styled(HourCircleBase)`
   background-color: var(--past-circle-orange);
 
   &.highlighted {
+    filter: brightness(110%);
     box-shadow: 0 0 3.5px 1.75px rgb(223, 116, 82, .075),
                 0 0 6px 3.5px rgb(223, 0, 82, .075),
                 0 0 9px 5px rgb(0, 116, 82, .075);
@@ -93,6 +101,7 @@ export const FutureHourCircle = styled(HourCircleBase)`
   background-color: rgba(255, 255, 255, .3);
 
   &.highlighted {
+    filter: brightness(110%);
     box-shadow: 0 0 3.5px 1.75px rgb(255, 255, 255, .025),
                 0 0 6px 3.5px rgb(255, 0, 255, .025),
                 0 0 9px 5px rgb(0, 255, 255, .025);
@@ -147,50 +156,61 @@ export const ArrowButton = styled.button`
     }
 
     &:hover {
-        filter: brightness(120%);
+      filter: brightness(120%);
     }
 `;
 
-export const SleepIconStyle = styled(SleepIcon)`
+const boxShadowStyle = `
+  box-shadow: 
+    0 0 3.5px 1.75px rgba(255, 255, 255, 0.3),
+    0 0 6px 3.5px rgba(255, 0, 255, 0.3),
+    0 0 9px 5px rgba(0, 255, 255, 0.3);
+`;
+
+const iconStyle = `
   width: 30px; 
   height: 30px;
   transition: transform 0.3s ease-in-out;
   cursor: pointer;
+  border-radius: 50%;
 
   &:hover {
     transform: scale(1.2);
+    filter: brightness(110%);
   }
 `;
 
-export const RunningIconStyle = styled(RunningIcon)`
-  width: 30px;
-  height: 30px;
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.2);
-  }
+export const SleepIconStyle = styled(({ isCurrent, ...props }) =>
+  isCurrent ? <SleepIconCurrent {...props} /> : <SleepIcon {...props} />
+)`
+  ${iconStyle}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;
 
-export const WorkIconStyle = styled(WorkIcon)`
-  width: 30px;
-  height: 30px;
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.2);
-  }
+export const RunningIconStyle = styled(({ isCurrent, ...props }) =>
+  isCurrent ? <RunningIconCurrent {...props} /> : <RunningIcon {...props} />
+)`
+  ${iconStyle}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;
 
-export const VocabIconStyle = styled(VocabIcon)`
-  width: 30px;
-  height: 30px;
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer;
+export const WorkIconStyle = styled(({ isCurrent, ...props }) =>
+  isCurrent ? <WorkIconCurrent {...props} /> : <WorkIcon {...props} />
+)`
+  ${iconStyle}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+`;
 
-  &:hover {
-    transform: scale(1.2);
-  }
+export const VocabIconStyle = styled(({ isCurrent, ...props }) =>
+  isCurrent ? <VocabIconCurrent {...props} /> : <VocabIcon {...props} />
+)`
+  ${iconStyle}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+`;
+
+export const ProjectIconStyle = styled(({ isCurrent, ...props }) =>
+  isCurrent ? <ProjectIconCurrent {...props} /> : <ProjectIcon {...props} />
+)`
+  ${iconStyle}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;

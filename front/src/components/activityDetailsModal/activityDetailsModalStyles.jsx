@@ -20,10 +20,15 @@ export const CloseButton = styled.div`
   top: 10px;
   right: 10px;
   cursor: pointer;
+  transition: filter 0.3s ease-in-out;
 
   svg {
     width: 15px; 
     height: 15px;
+  }
+
+  &:hover {
+    filter: brightness(120%);
   }
 `;
 
@@ -35,10 +40,15 @@ export const EditButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: filter 0.3s ease-in-out;
 
   svg {
     width: 22px;
     height: 22px;
+  }
+
+  &:hover {
+    filter: brightness(120%);
   }
 `;
 
@@ -50,10 +60,15 @@ export const DeleteButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: filter 0.3s ease-in-out;
 
   svg {
     width: 22px;
     height: 22px;
+  }
+
+  &:hover {
+    filter: brightness(120%);
   }
 `;
 

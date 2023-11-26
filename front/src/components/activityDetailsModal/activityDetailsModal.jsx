@@ -41,9 +41,11 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
         const durationInHours = durationInMilliseconds / 3600000;
         const wholeHours = Math.floor(durationInHours);
         const minutes = Math.round((durationInHours - wholeHours) * 60);
-
-        if (minutes === 0) {
-            return `${wholeHours}h`;
+    
+        if (wholeHours === 0) {
+            return `${minutes}m`; 
+        } else if (minutes === 0) {
+            return `${wholeHours}h`; 
         } else {
             return `${wholeHours}h ${minutes}m`;
         }

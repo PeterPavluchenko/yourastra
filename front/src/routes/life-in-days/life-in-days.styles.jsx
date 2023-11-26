@@ -4,11 +4,84 @@ import { Link } from "react-router-dom";
 export const DaysContainer = styled.div`
   width: 1560px;
   padding-bottom: 30px;
+
+  @media (max-width: 1640px) {
+    width: 1200px;
+  }
+
+  @media (max-width: 1329px) {
+    width: 1080px;
+  }
+
+  @media (max-width: 1179px) {
+    width: 960px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 780px;
+  }
+
+  @media (max-width: 870px) {
+    width: 660px;
+  }
+
+  @media (max-width: 768px) {
+    width: 600px;
+  }
+
+  @media (max-width: 680px) {
+    width: 480px;
+  }
+
+  @media (max-width: 580px) {
+    width: 360px;
+  }
+
+  @media (max-width: 480px) {
+    width: 240px;
+  }
 `;
 
 export const DaysWrapper = styled.div`
   display: inline-grid;
+
   grid-template-columns: repeat(260, 6px);
+
+  @media (max-width: 1640px) {
+    grid-template-columns: repeat(200, 6px);
+  }
+
+  @media (max-width: 1329px) {
+    grid-template-columns: repeat(180, 6px);
+  }
+
+  @media (max-width: 1179px) {
+    grid-template-columns: repeat(160, 6px);
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(130, 6px);
+  }
+
+  @media (max-width: 870px) {
+    grid-template-columns: repeat(110, 6px);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(100, 6px);
+  }
+
+  @media (max-width: 680px) {
+    grid-template-columns: repeat(80, 6px);
+  }
+
+  @media (max-width: 580px) {
+    grid-template-columns: repeat(60, 6px);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(40, 6px);
+  }
 `;
 
 const CircleBase = styled.div`

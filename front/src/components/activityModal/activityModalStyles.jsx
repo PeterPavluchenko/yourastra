@@ -82,4 +82,10 @@ export const CloseButton = styled.div`
     width: 15px; 
     height: 15px;
   }
+
+  transition: filter 0.3s ease-in-out;
+
+  &:hover {
+    filter: brightness(120%);
+  }
 `;

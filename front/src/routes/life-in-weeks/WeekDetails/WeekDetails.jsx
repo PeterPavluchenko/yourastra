@@ -15,7 +15,8 @@ import {
     SleepIconStyle,
     RunningIconStyle,
     WorkIconStyle,
-    VocabIconStyle
+    VocabIconStyle,
+    ProjectIconStyle
 } from './week-details.styles';
 import CustomTooltip from '../../../components/custom-tooltip/custom-tooltip';
 import { ReactComponent as PlusIcon } from "../../../assets/plus-icon.svg";
@@ -181,19 +182,25 @@ const WeekDetails = ({ user }) => {
     };
 
     const fetchActivities = async (start, end) => {
+        const offset = start.getTimezoneOffset() * 60000;
+        const startUTC = new Date(start.getTime() - offset).toISOString();
+        const endUTC = new Date(end.getTime() - offset).toISOString();
+    
         const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/activities?start=${start.toISOString()}&end=${end.toISOString()}`, {
+        const response = await fetch(`http://localhost:5000/api/activities?start=${startUTC}&end=${endUTC}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
         });
-    
+
         if (!response.ok) {
             throw new Error('Failed to fetch activities');
         }
     
         const activities = await response.json();
-        setActivities(activities);
+    
+        const sortedActivities = activities.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+        setActivities(sortedActivities);
     };
 
     useEffect(() => {
@@ -258,13 +265,6 @@ const WeekDetails = ({ user }) => {
     const handleActivityBlur = () => {
         setShowActivityTooltip(false);
     };
-    
-    const activityTypeToComponent = {
-        sleep: <SleepIconStyle />,
-        running: <RunningIconStyle />,
-        work: <WorkIconStyle />,
-        vocabulary: <VocabIconStyle />
-    };
 
     const [showActivityDetailsModal, setShowActivityDetailsModal] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState(null);
@@ -310,6 +310,24 @@ const WeekDetails = ({ user }) => {
         const { start, end } = getWeekRange(parseInt(weekIndex, 10));
         await fetchActivities(start, end);
     };
+
+    const isCurrentActivity = (activity) => {
+        const now = new Date();
+        const nowUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()));
+    
+        return nowUTC >= new Date(activity.startTime) && nowUTC <= new Date(activity.endTime);
+    };
+
+    const activityTypeToComponent = (type, isCurrent) => {
+        const components = {
+            sleep: <SleepIconStyle isCurrent={isCurrent} />,
+            running: <RunningIconStyle isCurrent={isCurrent} />,
+            work: <WorkIconStyle isCurrent={isCurrent} />,
+            vocabulary: <VocabIconStyle isCurrent={isCurrent} />,
+            project: <ProjectIconStyle isCurrent={isCurrent} />,
+        };
+        return components[type] || null;
+    };
     
     return (
         <WeekDetailsWrapper>
@@ -343,19 +361,23 @@ const WeekDetails = ({ user }) => {
                     </HoursWrapper>
                 </HoursContainer>
                 <WeekItems>
-                    {activities.map((activity, index) => (
-                        <div key={index}
-                            onClick={(e) => handleActivityClick(e, activity)}
-                            onMouseOver={(e) => handleActivityMouseOver(e, activity)}
-                            onMouseOut={handleActivityMouseOut}
-                            onFocus={(e) => handleActivityFocus(e, activity)}
-                            onBlur={handleActivityBlur}
-                            onKeyDown={(e) => handleKeyDown(e, activity)}
-                            tabIndex="0"
-                        >
-                            {activityTypeToComponent[activity.type] || `${activity.type} - ${new Date(activity.startTime).toLocaleString()}`}
-                        </div>
-                    ))}
+                    {activities.map((activity, index) => {
+                        const isCurrent = isCurrentActivity(activity);
+
+                        return (
+                            <div key={index}
+                                onClick={(e) => handleActivityClick(e, activity)}
+                                onMouseOver={(e) => handleActivityMouseOver(e, activity)}
+                                onMouseOut={handleActivityMouseOut}
+                                onFocus={(e) => handleActivityFocus(e, activity)}
+                                onBlur={handleActivityBlur}
+                                onKeyDown={(e) => handleKeyDown(e, activity)}
+                                tabIndex="0"
+                            >
+                                {activityTypeToComponent(activity.type, isCurrent)}
+                            </div>
+                        )
+                    })}
                     <AddNewBlockButton ref={addButtonRef} onClick={handleAddButtonClick}>
                         <PlusIcon 
                             onMouseOver={handleButtonMouseOver} 
