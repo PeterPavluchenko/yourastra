@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
     DetailsModalWrapper,
     CloseButton,
+    GoBackButton,
     EditButton,
     DeleteButton,
     ButtonContainer 
 } from './activityDetailsModalStyles';
 
+import EditActivityForm from './editActivityForm';
+
 import { ReactComponent as CloseIcon } from "../../assets/close-cross.svg";
+import { ReactComponent as GoBackIcon } from "../../assets/arrow-go-back.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/delete-icon.svg";
 import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
 
 const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
+    const [isEditMode, setIsEditMode] = useState(false);
+
     const formatDateTimeRange = (startTimeString, endTimeString) => {
         const startDate = new Date(startTimeString);
         const endDate = new Date(endTimeString);
@@ -81,16 +87,29 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
             <CloseButton>
                 <CloseIcon onClick={onClose} />
             </CloseButton>
-            <h2>{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}: {activity.startHour} - {activity.endHour} ({durationFormatted})</h2>
-            <p>{dateTimeRangeFormatted}</p>
-            <ButtonContainer>
-                <EditButton onClick={() => { /* handle edit functionality */ }}>
-                    <EditIcon />
-                </EditButton>
-                <DeleteButton onClick={deleteActivity}>
-                    <DeleteIcon />
-                </DeleteButton>
-            </ButtonContainer>
+
+            {isEditMode && (
+                <GoBackButton>
+                    <GoBackIcon onClick={() => setIsEditMode(false)} />
+                </GoBackButton>
+            )}
+
+            {!isEditMode ? (
+                <>
+                    <h2>{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}: {activity.startHour} - {activity.endHour} ({durationFormatted})</h2>
+                    <p>{dateTimeRangeFormatted}</p>
+                    <ButtonContainer>
+                        <EditButton onClick={() => setIsEditMode(true)}>
+                            <EditIcon />
+                        </EditButton>
+                        <DeleteButton onClick={deleteActivity}>
+                            <DeleteIcon />
+                        </DeleteButton>
+                    </ButtonContainer>
+                </>
+            ) : (
+                <EditActivityForm activity={activity} setEditMode={setIsEditMode} />
+            )}
         </DetailsModalWrapper>
     );
 };

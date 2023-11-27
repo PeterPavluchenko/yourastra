@@ -56,4 +56,26 @@ router.delete('/:id', auth, async (req, res) => {
     }
 });
 
+router.put('/:id', auth, async (req, res) => {
+    try {
+        const { type, startTime, endTime } = req.body;
+        const activityId = req.params.id;
+        const userId = req.user.id;
+
+        const activity = await Activity.findOne({ _id: activityId, user: userId });
+        if (!activity) {
+            return res.status(404).json({ msg: 'Activity not found' });
+        }
+
+        activity.type = type;
+        activity.startTime = new Date(startTime);
+        activity.endTime = new Date(endTime);
+
+        await activity.save();
+        res.json(activity);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

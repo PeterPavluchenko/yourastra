@@ -32,6 +32,23 @@ export const CloseButton = styled.div`
   }
 `;
 
+export const GoBackButton = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  transition: filter 0.3s ease-in-out;
+
+  svg {
+    width: 18px; 
+    height: 18px;
+  }
+
+  &:hover {
+    filter: brightness(120%);
+  }
+`;
+
 export const EditButton = styled.button`
   background: transparent;
   border: none;
@@ -79,4 +96,24 @@ export const ButtonContainer = styled.div`
   position: absolute;
   bottom: 17px;
   right: 10px;
+`;
+
+export const SaveButton = styled.button`
+  width: 100%;
+  padding: 8px;
+  background-color: #DF7452;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  
+  &:hover {
+    background-color: #e6886b;
+  }
+`;
+
+export const StyledForm = styled.form`
+  padding-top: 15px;
 `;

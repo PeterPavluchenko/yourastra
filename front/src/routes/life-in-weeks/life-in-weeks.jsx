@@ -22,7 +22,22 @@ const LifeInWeeks = ({ user }) => {
   endDate.setFullYear(birthDate.getFullYear() + 80);
 
   const totalWeeks = Math.floor((endDate - birthDate) / (7 * 24 * 60 * 60 * 1000));
-  const weeksSinceBirth = Math.ceil((currentDate - birthDate) / (7 * 24 * 60 * 60 * 1000));
+  let weeksSinceBirth = 0;
+
+  const daysToFirstSunday = (date) => {
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 0) return 0;
+    return 7 - dayOfWeek;
+  };
+
+  const firstWeekEndDate = new Date(birthDate);
+  firstWeekEndDate.setDate(birthDate.getDate() + daysToFirstSunday(birthDate));
+
+  if (currentDate <= firstWeekEndDate) {
+    weeksSinceBirth = 1;
+  } else {
+    weeksSinceBirth = Math.ceil(((currentDate - firstWeekEndDate) / (7 * 24 * 60 * 60 * 1000)) + 1);
+  }
 
   const getWeekRange = (weekIndex) => {
     const weekStart = new Date(birthDate.getTime());
