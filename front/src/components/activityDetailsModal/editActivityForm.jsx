@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ModalSelect, TimeSelectContainer } from '../activityModal/activityModalStyles';
 import { SaveButton, StyledForm } from './activityDetailsModalStyles';
 
-const EditActivityForm = ({ activity, setEditMode }) => {
+const EditActivityForm = ({ activity, setEditMode, onEditSuccess }) => {
 
     const [activityType, setActivityType] = useState(activity.type);
     const [startTime, setStartTime] = useState({ day: '', hour: '', minute: '' });
@@ -51,6 +51,8 @@ const EditActivityForm = ({ activity, setEditMode }) => {
             type: activityType, 
             startTime: convertToISO(startTime),
             endTime: convertToISO(endTime),
+            startHour: activity.startHour,
+            endHour: activity.endHour,
         };
     
         try {
@@ -68,6 +70,12 @@ const EditActivityForm = ({ activity, setEditMode }) => {
             }
     
             setEditMode(false);
+
+            const updatedActivityData = await response.json();
+
+            if (onEditSuccess) {
+                onEditSuccess(updatedActivityData);
+            }
         } catch (err) {
             console.error('Error:', err);
         }
@@ -87,14 +95,11 @@ const EditActivityForm = ({ activity, setEditMode }) => {
         const currentDayIndex = new Date().getDay();
         const currentDate = new Date();
     
-        // Calculate the difference in days and adjust the current date
         const dayDifference = selectedDayIndex - currentDayIndex;
         currentDate.setDate(currentDate.getDate() + dayDifference);
     
-        // Set the hour and minute (assuming local time)
         currentDate.setHours(hour, minute, 0, 0); 
     
-        // Convert local time to UTC ISO string
         const timezoneOffset = currentDate.getTimezoneOffset() * 60000;
         const utcDate = new Date(currentDate.getTime() - timezoneOffset);
         return utcDate.toISOString();

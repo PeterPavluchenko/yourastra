@@ -11,6 +11,12 @@ import { ReactComponent as WorkIconCurrent } from "../../../assets/circle-icons-
 import { ReactComponent as VocabIconCurrent } from "../../../assets/circle-icons-current/vocab-circle-current.svg";
 import { ReactComponent as ProjectIconCurrent } from "../../../assets/circle-icons-current/project-circle-current.svg";
 
+import { ReactComponent as SleepIconFuture } from "../../../assets/circle-icons-future/sleep-circle-future.svg";
+import { ReactComponent as RunningIconFuture } from "../../../assets/circle-icons-future/running-circle-future.svg";
+import { ReactComponent as WorkIconFuture } from "../../../assets/circle-icons-future/work-circle-future.svg";
+import { ReactComponent as VocabIconFuture } from "../../../assets/circle-icons-future/vocab-circle-future.svg";
+import { ReactComponent as ProjectIconFuture } from "../../../assets/circle-icons-future/project-circle-future.svg";
+
 export const WeekDetailsWrapper = styled.div`
     overflow-x: hidden;
     width: 100%;
@@ -180,37 +186,82 @@ const iconStyle = `
   }
 `;
 
-export const SleepIconStyle = styled(({ isCurrent, ...props }) =>
-  isCurrent ? <SleepIconCurrent {...props} /> : <SleepIcon {...props} />
-)`
-  ${iconStyle}
-  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+export const SleepIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = SleepIconCurrent;
+  } else if (isFuture) {
+      IconComponent = SleepIconFuture;
+  } else {
+      IconComponent = SleepIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+${iconStyle}
+${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;
 
-export const RunningIconStyle = styled(({ isCurrent, ...props }) =>
-  isCurrent ? <RunningIconCurrent {...props} /> : <RunningIcon {...props} />
-)`
-  ${iconStyle}
-  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+export const RunningIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = RunningIconCurrent;
+  } else if (isFuture) {
+      IconComponent = RunningIconFuture;
+  } else {
+      IconComponent = RunningIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+${iconStyle}
+${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;
 
-export const WorkIconStyle = styled(({ isCurrent, ...props }) =>
-  isCurrent ? <WorkIconCurrent {...props} /> : <WorkIcon {...props} />
-)`
-  ${iconStyle}
-  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+export const WorkIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = WorkIconCurrent;
+  } else if (isFuture) {
+      IconComponent = WorkIconFuture;
+  } else {
+      IconComponent = WorkIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+${iconStyle}
+${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;
 
-export const VocabIconStyle = styled(({ isCurrent, ...props }) =>
-  isCurrent ? <VocabIconCurrent {...props} /> : <VocabIcon {...props} />
-)`
-  ${iconStyle}
-  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+export const VocabIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = VocabIconCurrent;
+  } else if (isFuture) {
+      IconComponent = VocabIconFuture;
+  } else {
+      IconComponent = VocabIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+${iconStyle}
+${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;
 
-export const ProjectIconStyle = styled(({ isCurrent, ...props }) =>
-  isCurrent ? <ProjectIconCurrent {...props} /> : <ProjectIcon {...props} />
-)`
-  ${iconStyle}
-  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+export const ProjectIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = ProjectIconCurrent;
+  } else if (isFuture) {
+      IconComponent = ProjectIconFuture;
+  } else {
+      IconComponent = ProjectIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+${iconStyle}
+${({ isCurrent }) => isCurrent && boxShadowStyle}
 `;

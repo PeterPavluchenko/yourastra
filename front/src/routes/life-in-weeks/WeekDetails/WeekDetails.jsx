@@ -25,6 +25,7 @@ import { ReactComponent as ArrowLeftIcon } from "../../../assets/arrow-left.svg"
 
 import ActivityModal from '../../../components/activityModal/activityModal';
 import ActivityDetailsModal from '../../../components/activityDetailsModal/activityDetailsModal';
+import ActivityTypeColumns from './ActivityTypeColumns';
 
 const WeekDetails = ({ user }) => {
     const { weekIndex } = useParams();
@@ -154,6 +155,9 @@ const WeekDetails = ({ user }) => {
     
             setTimeout(() => setTransitionClass(''), 300);
         }, 300);
+
+        setShowAddActivityModal(false);
+        setShowActivityDetailsModal(false);
     };
     
     const goToPreviousWeek = () => {
@@ -179,6 +183,7 @@ const WeekDetails = ({ user }) => {
             setModalPosition({ top: position.top - 100, left: position.left - 85 });
         }
         setShowAddActivityModal(true);
+        setShowActivityDetailsModal(false);
     };
 
     const fetchActivities = async (start, end) => {
@@ -288,6 +293,7 @@ const WeekDetails = ({ user }) => {
             left: position.left - (position.width / 2)
         });
         setShowActivityDetailsModal(true);
+        setShowAddActivityModal(false);
     };
 
     const closeActivityDetailsModal = () => {
@@ -318,13 +324,20 @@ const WeekDetails = ({ user }) => {
         return nowUTC >= new Date(activity.startTime) && nowUTC <= new Date(activity.endTime);
     };
 
-    const activityTypeToComponent = (type, isCurrent) => {
+    const isFutureActivity = (activity) => {
+        const now = new Date();
+        const nowUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()));
+    
+        return nowUTC < new Date(activity.startTime);
+    };
+
+    const activityTypeToComponent = (type, isCurrent, isFuture) => {
         const components = {
-            sleep: <SleepIconStyle isCurrent={isCurrent} />,
-            running: <RunningIconStyle isCurrent={isCurrent} />,
-            work: <WorkIconStyle isCurrent={isCurrent} />,
-            vocabulary: <VocabIconStyle isCurrent={isCurrent} />,
-            project: <ProjectIconStyle isCurrent={isCurrent} />,
+            sleep: <SleepIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
+            running: <RunningIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
+            work: <WorkIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
+            vocabulary: <VocabIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
+            project: <ProjectIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
         };
         return components[type] || null;
     };
@@ -363,6 +376,7 @@ const WeekDetails = ({ user }) => {
                 <WeekItems>
                     {activities.map((activity, index) => {
                         const isCurrent = isCurrentActivity(activity);
+                        const isFuture = isFutureActivity(activity);
 
                         return (
                             <div key={index}
@@ -374,7 +388,7 @@ const WeekDetails = ({ user }) => {
                                 onKeyDown={(e) => handleKeyDown(e, activity)}
                                 tabIndex="0"
                             >
-                                {activityTypeToComponent(activity.type, isCurrent)}
+                                {activityTypeToComponent(activity.type, isCurrent, isFuture)}
                             </div>
                         )
                     })}
@@ -385,12 +399,15 @@ const WeekDetails = ({ user }) => {
                         />
                     </AddNewBlockButton>
                 </WeekItems>
+                <ActivityTypeColumns activities={activities} />
                 {showActivityDetailsModal && (
                     <ActivityDetailsModal
                         activity={selectedActivity}
                         onClose={closeActivityDetailsModal}
                         onRefresh={refreshActivities} 
                         position={activityModalPosition}
+                        start={start}
+                        setModalHighlightedHours={setModalHighlightedHours}
                     />
                 )}
                 {showAddActivityModal && (

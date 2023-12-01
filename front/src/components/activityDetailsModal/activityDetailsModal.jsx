@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     DetailsModalWrapper,
     CloseButton,
@@ -15,8 +15,36 @@ import { ReactComponent as GoBackIcon } from "../../assets/arrow-go-back.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/delete-icon.svg";
 import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
 
-const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
+const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, setModalHighlightedHours }) => {
     const [isEditMode, setIsEditMode] = useState(false);
+    const [currentActivity, setCurrentActivity] = useState(activity);
+    const [durationFormatted, setDurationFormatted] = useState('');
+    const [dateTimeRangeFormatted, setDateTimeRangeFormatted] = useState('');
+
+    useEffect(() => {
+        setDurationFormatted(formatDuration(currentActivity.startTime, currentActivity.endTime));
+        setDateTimeRangeFormatted(formatDateTimeRange(currentActivity.startTime, currentActivity.endTime));
+    }, [currentActivity]);
+
+    const handleEditSuccess = (updatedActivity) => {
+        const startHour = calculateHourIndex(updatedActivity.startTime);
+        const endHour = calculateHourIndex(updatedActivity.endTime);
+
+        setCurrentActivity({
+            ...updatedActivity,
+            startHour: startHour,
+            endHour: endHour
+        });
+
+        setModalHighlightedHours({ start: startHour, end: endHour });
+
+        onRefresh(); 
+    };
+
+    const calculateHourIndex = (dateTime) => {
+        const date = new Date(dateTime);
+        return Math.floor((date - start) / (3600000)); 
+    };
 
     const formatDateTimeRange = (startTimeString, endTimeString) => {
         const startDate = new Date(startTimeString);
@@ -57,10 +85,6 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
         }
     };
 
-    const durationFormatted = formatDuration(activity.startTime, activity.endTime);
-
-    const dateTimeRangeFormatted = formatDateTimeRange(activity.startTime, activity.endTime);
-
     const deleteActivity = async () => {
         try {
             const response = await fetch(`http://localhost:5000/api/activities/${activity._id}`, {
@@ -96,7 +120,7 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
 
             {!isEditMode ? (
                 <>
-                    <h2>{activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}: {activity.startHour} - {activity.endHour} ({durationFormatted})</h2>
+                    <h2>{currentActivity.type.charAt(0).toUpperCase() + currentActivity.type.slice(1)}: {currentActivity.startHour} - {currentActivity.endHour} ({durationFormatted})</h2>
                     <p>{dateTimeRangeFormatted}</p>
                     <ButtonContainer>
                         <EditButton onClick={() => setIsEditMode(true)}>
@@ -108,7 +132,7 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position }) => {
                     </ButtonContainer>
                 </>
             ) : (
-                <EditActivityForm activity={activity} setEditMode={setIsEditMode} />
+                <EditActivityForm activity={currentActivity} setEditMode={setIsEditMode} onEditSuccess={handleEditSuccess} />
             )}
         </DetailsModalWrapper>
     );
