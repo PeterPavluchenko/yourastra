@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowButton, TitleContainer } from '../../life-in-days/DayDetails/day-details.styles';
 import { 
@@ -121,25 +121,47 @@ const MonthDetails = ({ user }) => {
         return `Hour ${hourIndex + 1}: ${startStr} - ${endStr}, ${dayOfWeek}, ${monthName} ${dayOfMonth}`;
     };
 
-    // Mouse over event handler for hours
+    const hourCircleTooltipRef = useRef(null);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+
     const handleMouseOver = (e, hourIndex) => {
+        setTooltipVisible(false);
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+          return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
         const rect = e.target.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + window.scrollY;
+        const x = rect.left + (rect.width / 2);
+        const y = rect.top + window.scrollY - 130;
 
         const hourRangeStr = formatHourRange(hourIndex);
         setTooltipContent(hourRangeStr);
-        setPosition({ x: x - 110, y: y - 130 });
+        setPosition({ x: x, y: y });
         setShowTooltip(true);
     };
 
-    // Mouse out event handler for hours
-    const handleMouseOut = () => {
+    const handleMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+
         setShowTooltip(false);
+        setTooltipVisible(false);
     };
+
+    useEffect(() => {
+        if (showTooltip && hourCircleTooltipRef.current) {
+            const tooltipWidth = hourCircleTooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showTooltip, tooltipContent]);
 
     return (
         <MonthDetailsWrapper>
@@ -168,7 +190,7 @@ const MonthDetails = ({ user }) => {
                         })}
                     </HoursWrapper>
                 </HoursContainer>
-                {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+                {showTooltip && <CustomTooltip ref={hourCircleTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
             </MonthDetailsContainer>
         </MonthDetailsWrapper>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import {
   WeeksContainer,
@@ -69,27 +69,49 @@ const LifeInWeeks = ({ user }) => {
     return `${startDateStr} - ${endDateStr}${yearStr}`;
   };
 
+  const weekCircleTooltipRef = useRef(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const handleMouseOver = (e, weekIndex) => {
+    setTooltipVisible(false);
+    if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
 
     const rect = e.target.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + window.scrollY;
+    const x = rect.left + (rect.width / 2);
+    const y = rect.top + window.scrollY - 55;
 
     const { start, end } = getWeekRange(weekIndex);
     const dateRangeStr = formatWeekRange(start, end);
 
     setTooltipContent(`Week ${weekIndex + 1}: ${dateRangeStr}`);
-    setPosition({ x: x - 125, y: y - 55 });
+    setPosition({ x: x, y: y });
     setShowTooltip(true);
   };
 
-  const handleMouseOut = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleMouseOut = (event) => {
+    if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
     setShowTooltip(false);
+    setTooltipVisible(false);
   };
+
+  useEffect(() => {
+    if (showTooltip && weekCircleTooltipRef.current && !tooltipVisible) {
+        const tooltipWidth = weekCircleTooltipRef.current.offsetWidth;
+        const updatedX = position.x - (tooltipWidth / 2);
+        setPosition(prev => ({ ...prev, x: updatedX }));
+        setTooltipVisible(true);
+    }
+  }, [showTooltip, tooltipContent]);
 
   const getWeekCircleComponent = (weekIndex) => {
     if (weekIndex < weeksSinceBirth) {
@@ -125,7 +147,7 @@ const LifeInWeeks = ({ user }) => {
           );
         })}
       </WeeksWrapper>
-      {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+      {showTooltip && <CustomTooltip ref={weekCircleTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
     </WeeksContainer>
   );
 };

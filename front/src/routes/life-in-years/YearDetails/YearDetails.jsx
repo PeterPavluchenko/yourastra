@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
     TitleContainer,
@@ -80,35 +80,63 @@ const YearDetails = ({ user }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [tooltipContent, setTooltipContent] = useState('');
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const dayCircleTooltipRef = useRef(null);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
 
     const handleMouseOver = (e, dayIndex) => {
+        setTooltipVisible(false);
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+          return;
+        }
+
         const dayDate = new Date(yearDisplayedStart);
         dayDate.setDate(yearDisplayedStart.getDate() + dayIndex);
     
         const formattedDate = `Day ${dayIndex + 1}: ${dayDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
     
         const rect = e.target.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + window.scrollY;
+        const x = rect.left + (rect.width / 2);
+        const y = rect.top + window.scrollY - 130;
     
         setTooltipContent(formattedDate);
-        setPosition({ x: x - 100, y: y - 130 });
+        setPosition({ x: x, y: y });
         setShowTooltip(true);
     };
     
-    const handleMouseOut = () => {
+    const handleMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
         setShowTooltip(false);
+        setTooltipVisible(false);
     };
 
+    useEffect(() => {
+        if (showTooltip && dayCircleTooltipRef.current) {
+            const tooltipWidth = dayCircleTooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showTooltip, tooltipContent]);
+
     const [showButtonTooltip, setShowButtonTooltip] = useState(false);
+    const buttonTooltipRef = useRef(null);
 
     const handleButtonMouseOver = (e) => {
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
         const button = e.currentTarget;
         const rect = button.getBoundingClientRect();
-        const x = (rect.left + rect.width / 2) - 100;
+        const x = rect.left + (rect.width / 2);
         const y = rect.top - 130;
 
         setTooltipContent(`Add something for year ${yearIndex}`);
@@ -116,9 +144,23 @@ const YearDetails = ({ user }) => {
         setShowButtonTooltip(true);
     };
 
-    const handleButtonMouseOut = () => {
+    const handleButtonMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
+
         setShowButtonTooltip(false);
+        setTooltipVisible(false);
     };
+
+    useEffect(() => {
+        if (showButtonTooltip && buttonTooltipRef.current) {
+            const tooltipWidth = buttonTooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showButtonTooltip, tooltipContent]);
     
     return (
         <YearDetailsWrapper>
@@ -157,8 +199,8 @@ const YearDetails = ({ user }) => {
                         />
                     </AddNewBlockButton>
                 </YearItems>
-                {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
-                {showButtonTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+                {showTooltip && <CustomTooltip ref={dayCircleTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
+                {showButtonTooltip && <CustomTooltip ref={buttonTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
             </YearDetailsContainer>
         </YearDetailsWrapper>
     );

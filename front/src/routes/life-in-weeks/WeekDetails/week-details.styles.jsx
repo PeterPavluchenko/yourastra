@@ -79,11 +79,11 @@ const HourCircleBase = styled.div`
   cursor: pointer;
 
   &:hover {
-    transform: scale(2.5);
+    transform: scale(2);
   }
 
   &.highlighted {
-    transform: scale(1.7);
+    transform: scale(1.5);
   }
 `;
 

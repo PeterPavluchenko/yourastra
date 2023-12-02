@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import {
   YearsContainer,
@@ -25,24 +25,46 @@ const LifeInYears = ({ user }) => {
 
   const currentYear = new Date().getFullYear();
 
+  const yearCircleTooltipRef = useRef(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const handleMouseOver = (e, year, index) => {
+    setTooltipVisible(false);
+    if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
 
     const rect = e.target.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + window.scrollY; 
+    const x = rect.left + (rect.width / 2);
+    const y = rect.top + window.scrollY - 65; 
 
     setTooltipContent(`Year ${index + 1}: ${year}`);
-    setPosition({ x: x - 50, y: y - 65 });
+    setPosition({ x: x, y: y });
     setShowTooltip(true);
   };
 
-  const handleMouseOut = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleMouseOut = (event) => {
+    if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
     setShowTooltip(false);
+    setTooltipVisible(false);
   };
+
+  useEffect(() => {
+    if (showTooltip && yearCircleTooltipRef.current) {
+        const tooltipWidth = yearCircleTooltipRef.current.offsetWidth;
+        const updatedX = position.x - (tooltipWidth / 2);
+        setPosition(prev => ({ ...prev, x: updatedX }));
+        setTooltipVisible(true);
+    }
+}, [showTooltip, tooltipContent]);
 
   return (
     <YearsContainer>
@@ -72,7 +94,7 @@ const LifeInYears = ({ user }) => {
           );
         })}
       </YearsWrapper>
-      {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+      {showTooltip && <CustomTooltip ref={yearCircleTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
     </YearsContainer>
   );
 };

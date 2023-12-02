@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import {
   DaysContainer,
@@ -49,27 +49,49 @@ const LifeInDays = ({ user }) => {
     return date.toLocaleDateString('en-US', options);
   };
 
+  const dayCircleTooltipRef = useRef(null);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const handleMouseOver = (e, dayIndex) => {
+    setTooltipVisible(false);
+    if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
 
     const rect = e.target.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + window.scrollY;
+    const x = rect.left + (rect.width / 2);
+    const y = rect.top + window.scrollY - 50;
 
     const dayDate = new Date(birthDate);
     dayDate.setDate(birthDate.getDate() + dayIndex);
 
     setTooltipContent(`Day ${dayIndex + 1}: ${formatDate(dayDate)}`);
-    setPosition({ x: x - 100, y: y - 50 });
+    setPosition({ x: x, y: y });
     setShowTooltip(true);
   };
 
-  const handleMouseOut = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleMouseOut = (event) => {
+    if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
     setShowTooltip(false);
+    setTooltipVisible(false);
   };
+
+  useEffect(() => {
+    if (showTooltip && dayCircleTooltipRef.current && !tooltipVisible) {
+        const tooltipWidth = dayCircleTooltipRef.current.offsetWidth;
+        const updatedX = position.x - (tooltipWidth / 2);
+        setPosition(prev => ({ ...prev, x: updatedX }));
+        setTooltipVisible(true);
+    }
+  }, [showTooltip, tooltipContent]);
 
   const getDayCircleComponent = (dayIndex, isInteractive) => {
     let type = 'future';
@@ -116,7 +138,7 @@ const LifeInDays = ({ user }) => {
           ) : DayCircleComponent;
         })}
       </DaysWrapper>
-      {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+      {showTooltip && <CustomTooltip ref={dayCircleTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
     </DaysContainer>
   );
 };

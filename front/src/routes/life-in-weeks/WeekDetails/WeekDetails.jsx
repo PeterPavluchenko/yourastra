@@ -94,23 +94,43 @@ const WeekDetails = ({ user }) => {
         return `Hour ${hourIndex + 1}: ${startStr} - ${endStr}, ${dayOfWeek}`;
     };
 
+    const tooltipRef = useRef(null);
+
     const handleMouseOver = (e, hourIndex) => {
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
-        const rect = e.target.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + window.scrollY;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = rect.left + (rect.width / 2);
+        const y = rect.top + window.scrollY - 130;
 
         const hourRangeStr = formatHourRange(hourIndex);
         setTooltipContent(hourRangeStr);
-        setPosition({ x: x - 110, y: y - 130 });
+        setPosition({ x: x, y: y });
         setShowTooltip(true);
     };
 
-    const handleMouseOut = () => {
+    const handleMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
+        
         setShowTooltip(false);
+        setTooltipVisible(false);
     };
+
+    useEffect(() => {
+        if (showTooltip && tooltipRef.current) {
+            const tooltipWidth = tooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showTooltip, tooltipContent]);
 
     const getHourCircleComponent = (hourIndex) => {
         if (hourIndex < currentHourIndex) {
@@ -124,14 +144,20 @@ const WeekDetails = ({ user }) => {
     
     const [showButtonTooltip, setShowButtonTooltip] = useState(false);
     const [showActivityTooltip, setShowActivityTooltip] = useState(false);
+
+    const buttonTooltipRef = useRef(null);
     
     const handleButtonMouseOver = (e) => {
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
         const button = e.currentTarget;
         const rect = button.getBoundingClientRect();
-        const x = (rect.left + rect.width / 2) - 100;
+        const x = rect.left + (rect.width / 2);
         const y = rect.top - 130;
 
         setTooltipContent(`Add something for week ${adjustedWeekIndex}`);
@@ -139,9 +165,22 @@ const WeekDetails = ({ user }) => {
         setShowButtonTooltip(true);
     };
 
-    const handleButtonMouseOut = () => {
+    const handleButtonMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
         setShowButtonTooltip(false);
+        setTooltipVisible(false);
     };
+
+    useEffect(() => {
+        if (showButtonTooltip && buttonTooltipRef.current) {
+            const tooltipWidth = buttonTooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showButtonTooltip, tooltipContent]);
 
     const goToWeek = (index, direction) => {
         const exitTransitionClass = direction === 'left' ? 'exit-right' : 'exit-left';
@@ -224,20 +263,28 @@ const WeekDetails = ({ user }) => {
         return `${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}: Hours ${startHour}-${endHour}`;
     };
 
+    const activityTooltipRef = useRef(null);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+
     const handleActivityMouseOver = (e, activity) => {
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+            return;
+        }
+
         if (showActivityDetailsModal || showAddActivityModal) {
             return; 
         }
 
         const formattedTooltip = formatActivityTooltip(activity);
         const rect = e.currentTarget.getBoundingClientRect();
-        setPosition({ x: (rect.left + rect.width / 2) - 70, y: rect.top + window.scrollY - 130 });
+        setPosition({ x: rect.left + (rect.width / 2), y: rect.top + window.scrollY - 130});
         setTooltipContent(formattedTooltip);
+        
         setShowActivityTooltip(true);
     
         const startHour = calculateHourIndex(activity.startTime);
         const endHour = calculateHourIndex(activity.endTime);
-        
+
         highlightHours(startHour, endHour);
     };
     
@@ -250,8 +297,21 @@ const WeekDetails = ({ user }) => {
         setHighlightedHours({ start: startHour, end: endHour });
     };
 
-    const handleActivityMouseOut = () => {
+    useEffect(() => {
+        if (showActivityTooltip && activityTooltipRef.current) {
+            const tooltipWidth = activityTooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showActivityTooltip, tooltipContent]);
+
+    const handleActivityMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
         setShowActivityTooltip(false);
+        setTooltipVisible(false);
         setHighlightedHours({ start: null, end: null });
     };
 
@@ -418,9 +478,10 @@ const WeekDetails = ({ user }) => {
                       onActivitySave={() => fetchActivities(start, end)}
                     />
                   )}
-                {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
-                {showButtonTooltip && <CustomTooltip content={tooltipContent} position={position} />}
-                {showActivityTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+                {showTooltip && <CustomTooltip ref={tooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
+                {showButtonTooltip && <CustomTooltip ref={buttonTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
+                {showActivityTooltip && 
+                    <CustomTooltip ref={activityTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
             </WeekDetailsContainer>
         </WeekDetailsWrapper>
     );

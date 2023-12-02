@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
     DayDetailsContainer, 
@@ -105,13 +105,21 @@ const DayDetails = ({ user }) => {
         return `Minute ${minuteIndex + 1}: ${hour}:${minute.toString().padStart(2, '0')} - ${nextHour}:${nextMinute.toString().padStart(2, '0')}`;
     };
 
+    const minuteCircleTooltipRef = useRef(null);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+
     const handleMouseOver = (e, minuteIndex) => {
+        setTooltipVisible(false);
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) {
+          return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
         const rect = e.target.getBoundingClientRect();
-        const x = (rect.left + rect.width / 2) - 85;
-        const y = rect.top + window.scrollY - 130; // Adjust position as needed
+        const x = rect.left + (rect.width / 2);
+        const y = rect.top + window.scrollY - 130;
 
         const minuteRangeStr = formatMinuteRange(minuteIndex);
         setTooltipContent(minuteRangeStr);
@@ -119,9 +127,26 @@ const DayDetails = ({ user }) => {
         setShowTooltip(true);
     };
 
-    const handleMouseOut = () => {
+    const handleMouseOut = (event) => {
+        if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
         setShowTooltip(false);
+        setTooltipVisible(false);
     };
+
+    useEffect(() => {
+        if (showTooltip && minuteCircleTooltipRef.current) {
+            const tooltipWidth = minuteCircleTooltipRef.current.offsetWidth;
+            const updatedX = position.x - (tooltipWidth / 2);
+            setPosition(prev => ({ ...prev, x: updatedX }));
+            setTooltipVisible(true);
+        }
+    }, [showTooltip, tooltipContent]);
 
     return (
         <DayDetailsWrapper>
@@ -152,7 +177,7 @@ const DayDetails = ({ user }) => {
                     })}
                 </MinutesWrapper>
             </MinutesContainer>
-            {showTooltip && <CustomTooltip content={tooltipContent} position={position} />}
+            {showTooltip && <CustomTooltip ref={minuteCircleTooltipRef} content={tooltipContent} position={position} isVisible={tooltipVisible} />}
             </DayDetailsContainer>
         </DayDetailsWrapper>
     );
