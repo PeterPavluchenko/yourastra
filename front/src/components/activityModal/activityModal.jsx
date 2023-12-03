@@ -115,6 +115,7 @@ const ActivityModal = ({ onClose, position, weekStartDate, onActivitySave }) => 
             </CloseButton>
             {activeTab === 1 && (
                 <>
+                    <p>Select activity</p>
                     <ModalSelect defaultValue="" onChange={handleSelectChange}>
                         <option value="" disabled hidden>Select something</option>
                         <option value="sleep">Sleep</option>

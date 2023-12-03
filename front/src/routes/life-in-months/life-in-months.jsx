@@ -70,7 +70,7 @@ const LifeInMonths = ({ user }) => {
   };
 
   useEffect(() => {
-    if (showTooltip && monthCircleTooltipRef.current) {
+    if (showTooltip && monthCircleTooltipRef.current && !tooltipVisible) {
         const tooltipWidth = monthCircleTooltipRef.current.offsetWidth;
         const updatedX = position.x - (tooltipWidth / 2);
         setPosition(prev => ({ ...prev, x: updatedX }));

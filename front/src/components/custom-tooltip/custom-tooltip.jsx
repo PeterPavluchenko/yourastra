@@ -11,8 +11,6 @@ const CustomTooltip = React.forwardRef(({ content, position, isVisible }, ref) =
     style.visibility = isVisible ? 'visible' : 'hidden';
   }
 
-  console.log(style)
-
   return (
     <div ref={ref} className="custom-tooltip" style={style}>
       {content}

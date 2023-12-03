@@ -16,7 +16,9 @@ const LifeInWeeks = ({ user }) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const birthDate = user ? new Date(user.birthday) : new Date("1997-08-26");
-  const currentDate = new Date();
+
+  const today = new Date();
+  const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const endDate = new Date(birthDate);
   
   endDate.setFullYear(birthDate.getFullYear() + 80);

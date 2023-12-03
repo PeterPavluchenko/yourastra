@@ -27,7 +27,7 @@ const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
     ) : null;
 };
 
-const ActivityTypeColumns = ({ activities }) => {
+const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
     const activityTypes = [...new Set(activities.map(activity => activity.type))];
     const [hoveredType, setHoveredType] = useState(null);
 
@@ -77,6 +77,7 @@ const ActivityTypeColumns = ({ activities }) => {
         setShowTypeIconTooltip(true);
         setTooltipContent(tooltipText);
         setHoveredType(type);
+        onActivityTypeHover(type);
     };
     
     const handleMouseOut = (event) => {
@@ -86,6 +87,7 @@ const ActivityTypeColumns = ({ activities }) => {
         setTooltipVisible(false);
         setShowTypeIconTooltip(false);
         setHoveredType(null);
+        onActivityTypeHover(null);
     };
     
     const renderActivityCircles = (activities, type) => {
@@ -121,7 +123,7 @@ const ActivityTypeColumns = ({ activities }) => {
                 <ActivityTypeColumn key={type}>
                     {getActivityTypeIcon(type, handleMouseOver, handleMouseOut)}
                     {renderActivityCircles(activities, type)}
-                </ActivityTypeColumn>
+                </ActivityTypeColumn>   
             ))}
             {showTypeIconTooltip && 
                 <CustomTooltip 

@@ -40,8 +40,14 @@ const WeekDetails = ({ user }) => {
     const [transitionClass, setTransitionClass] = useState('');
 
     const [activities, setActivities] = useState([]);
-    const [highlightedHours, setHighlightedHours] = useState({ start: null, end: null });
+    const [highlightedHours, setHighlightedHours] = useState([]);
 
+    const isHourHighlighted = (hourIndex) => {
+        hourIndex += 1;
+        return highlightedHours.some(({ start, end }) => 
+            hourIndex >= start && hourIndex <= end
+        );
+    };
 
     const getWeekRange = (index) => {
         const birthDate = new Date(userBirthDate);
@@ -260,7 +266,14 @@ const WeekDetails = ({ user }) => {
     
         const startHour = getHourIndex(activity.startTime);
         const endHour = getHourIndex(activity.endTime);
-        return `${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}: Hours ${startHour}-${endHour}`;
+    
+        const activityTypeFormatted = activity.type.charAt(0).toUpperCase() + activity.type.slice(1);
+    
+        if (startHour === endHour) {
+            return `${activityTypeFormatted}: Hour ${startHour}`;
+        } else {
+            return `${activityTypeFormatted}: Hours ${startHour}-${endHour}`;
+        }
     };
 
     const activityTooltipRef = useRef(null);
@@ -294,7 +307,8 @@ const WeekDetails = ({ user }) => {
     };
 
     const highlightHours = (startHour, endHour) => {
-        setHighlightedHours({ start: startHour, end: endHour });
+        const activityHours = [{ start: startHour, end: endHour }];
+        setHighlightedHours(activityHours);
     };
 
     useEffect(() => {
@@ -312,7 +326,7 @@ const WeekDetails = ({ user }) => {
         }
         setShowActivityTooltip(false);
         setTooltipVisible(false);
-        setHighlightedHours({ start: null, end: null });
+        setHighlightedHours([{ start: null, end: null }]);
     };
 
     const handleActivityFocus = (e, activity) => {
@@ -401,6 +415,24 @@ const WeekDetails = ({ user }) => {
         };
         return components[type] || null;
     };
+
+    const highlightHoursByActivityType = (type) => {
+        if (!type) {
+            setHighlightedHours([]);
+            return;
+        }
+    
+        const hoursToHighlight = activities.reduce((acc, activity) => {
+            if (activity.type === type) {
+                const startHour = calculateHourIndex(activity.startTime);
+                const endHour = calculateHourIndex(activity.endTime);
+                acc.push({ start: startHour, end: endHour });
+            }
+            return acc;
+        }, []);
+
+        setHighlightedHours(hoursToHighlight);
+    };
     
     return (
         <WeekDetailsWrapper>
@@ -420,8 +452,8 @@ const WeekDetails = ({ user }) => {
                     <HoursWrapper>
                         {Array.from({ length: totalHours }, (_, i) => {
                             const HourCircleComponent = getHourCircleComponent(i);
-                            const isHighlighted = i >= (highlightedHours.start - 1) && i <= (highlightedHours.end - 1) ||
-                                                i >= (modalHighlightedHours.start - 1) && i <= (modalHighlightedHours.end - 1);
+                            const isHighlighted = isHourHighlighted(i) || 
+                                                (i >= (modalHighlightedHours.start - 1) && i <= (modalHighlightedHours.end - 1));
                             return (
                                 <HourCircleComponent 
                                     key={i}
@@ -459,7 +491,10 @@ const WeekDetails = ({ user }) => {
                         />
                     </AddNewBlockButton>
                 </WeekItems>
-                <ActivityTypeColumns activities={activities} />
+                <ActivityTypeColumns 
+                    activities={activities} 
+                    onActivityTypeHover={highlightHoursByActivityType} 
+                />
                 {showActivityDetailsModal && (
                     <ActivityDetailsModal
                         activity={selectedActivity}
