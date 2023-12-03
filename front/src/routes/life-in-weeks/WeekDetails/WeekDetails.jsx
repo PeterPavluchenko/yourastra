@@ -405,20 +405,26 @@ const WeekDetails = ({ user }) => {
         return nowUTC < new Date(activity.startTime);
     };
 
+    const [hoveredActivityType, setHoveredActivityType] = useState(null);
+
     const activityTypeToComponent = (type, isCurrent, isFuture) => {
+        const isHighlighted = type === hoveredActivityType;
+
         const components = {
-            sleep: <SleepIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
-            running: <RunningIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
-            work: <WorkIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
-            vocabulary: <VocabIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
-            project: <ProjectIconStyle isCurrent={isCurrent} isFuture={isFuture} />,
+            sleep: <SleepIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            running: <RunningIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            work: <WorkIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            vocabulary: <VocabIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            project: <ProjectIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
         };
+
         return components[type] || null;
     };
 
     const highlightHoursByActivityType = (type) => {
         if (!type) {
             setHighlightedHours([]);
+            setHoveredActivityType(null);
             return;
         }
     
@@ -432,6 +438,8 @@ const WeekDetails = ({ user }) => {
         }, []);
 
         setHighlightedHours(hoursToHighlight);
+
+        setHoveredActivityType(type);
     };
     
     return (

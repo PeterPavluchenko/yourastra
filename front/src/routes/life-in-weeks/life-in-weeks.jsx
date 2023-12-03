@@ -59,7 +59,7 @@ const LifeInWeeks = ({ user }) => {
   };
 
   const formatWeekRange = (start, end) => {
-    const options = { month: 'long', day: 'numeric' };
+    const options = { month: 'short', day: 'numeric' }; 
     let startDateStr = start.toLocaleDateString('en-US', options);
     let endDateStr = end.toLocaleDateString('en-US', options);
 
@@ -69,7 +69,8 @@ const LifeInWeeks = ({ user }) => {
 
     const yearStr = `, ${start.getFullYear()}`;
     return `${startDateStr} - ${endDateStr}${yearStr}`;
-  };
+};
+
 
   const weekCircleTooltipRef = useRef(null);
   const [tooltipVisible, setTooltipVisible] = useState(false);

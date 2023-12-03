@@ -5,6 +5,7 @@ import { ReactComponent as RunningTypeIcon } from "../../../assets/type-icons/ru
 import { ReactComponent as WorkTypeIcon } from "../../../assets/type-icons/work-type-icon.svg";
 import { ReactComponent as VocabTypeIcon } from "../../../assets/type-icons/vocab-type-icon.svg";
 import { ReactComponent as ProjectTypeIcon } from "../../../assets/type-icons/project-type-icon.svg";
+import { ReactComponent as OtherTypeIcon } from "../../../assets/type-icons/other-type-icon.svg";
 
 import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle } from './ActivityTypeColumnsStyles';
 
@@ -15,6 +16,7 @@ const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
         work: WorkTypeIcon,
         vocabulary: VocabTypeIcon,
         project: ProjectTypeIcon,
+        other: OtherTypeIcon,
     }[type];
 
     return IconComponent ? (
@@ -29,6 +31,19 @@ const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
 
 const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
     const activityTypes = [...new Set(activities.map(activity => activity.type))];
+    activityTypes.push('other');
+
+    const calculateTotalActivityTime = () => {
+        return activities.reduce((sum, activity) => {
+            const start = new Date(activity.startTime).getTime();
+            const end = new Date(activity.endTime).getTime();
+            return sum + (end - start);
+        }, 0);
+    };
+
+    const totalWeekMillis = 168 * 60 * 60 * 1000;
+    const remainingTimeMillis = totalWeekMillis - calculateTotalActivityTime();
+
     const [hoveredType, setHoveredType] = useState(null);
 
     const [showTypeIconTooltip, setShowTypeIconTooltip] = useState(false);
@@ -37,6 +52,7 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
     const tooltipRef = useRef(null);
 
     const [tooltipVisible, setTooltipVisible] = useState(false);
+    
 
     useEffect(() => {
         if (showTypeIconTooltip && tooltipRef.current) {
@@ -52,21 +68,26 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
             return;
         }
     
-        const totalMillis = activities
-            .filter(activity => activity.type === type)
-            .reduce((sum, activity) => {
-                const start = new Date(activity.startTime).getTime();
-                const end = new Date(activity.endTime).getTime();
-                return sum + (end - start);
-            }, 0);
+        let totalMillis;
+        if (type === 'other') {
+            totalMillis = remainingTimeMillis;
+        } else {
+            totalMillis = activities
+                .filter(activity => activity.type === type)
+                .reduce((sum, activity) => {
+                    const start = new Date(activity.startTime).getTime();
+                    const end = new Date(activity.endTime).getTime();
+                    return sum + (end - start);
+                }, 0);
+        }
     
         let tooltipText = '';
         const totalMinutes = Math.round(totalMillis / 60000);
         if (totalMinutes < 60) {
-            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${totalMinutes} minutes`;
+            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${totalMinutes} minute${totalMinutes === 1 ? '' : 's'}`;
         } else {
             const hours = Math.floor(totalMinutes / 60);
-            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${hours} ${hours === 1 ? "hour" : "hours"}`;
+            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${hours} hour${hours === 1 ? '' : 's'}`;
         }
     
         const rect = event.currentTarget.getBoundingClientRect();
@@ -91,14 +112,19 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
     };
     
     const renderActivityCircles = (activities, type) => {
-        const totalMillis = activities
-            .filter(activity => activity.type === type)
-            .reduce((sum, activity) => {
-                const start = new Date(activity.startTime).getTime();
-                const end = new Date(activity.endTime).getTime();
-                return sum + (end - start);
-            }, 0);
-    
+        let totalMillis;
+        if (type === 'other') {
+            totalMillis = remainingTimeMillis;
+        } else {
+            totalMillis = activities
+                .filter(activity => activity.type === type)
+                .reduce((sum, activity) => {
+                    const start = new Date(activity.startTime).getTime();
+                    const end = new Date(activity.endTime).getTime();
+                    return sum + (end - start);
+                }, 0);
+        }
+
         const totalHours = Math.round(totalMillis / 3600000);
         const circles = [];
         for (let i = 0; i < totalHours; i++) {
@@ -109,7 +135,7 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
                 />
             );
         }
-    
+
         return (
             <ActivityCirclesContainer>
                 {circles}

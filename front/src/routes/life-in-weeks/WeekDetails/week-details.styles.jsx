@@ -186,7 +186,12 @@ const iconStyle = `
   }
 `;
 
-export const SleepIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+const highlightedStyle = `
+  transform: scale(1.2);
+  filter: brightness(110%);
+`;
+
+export const SleepIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
   let IconComponent;
   if (isCurrent) {
       IconComponent = SleepIconCurrent;
@@ -200,9 +205,10 @@ export const SleepIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
 })`
 ${iconStyle}
 ${({ isCurrent }) => isCurrent && boxShadowStyle}
+${({ highlighted }) => highlighted && highlightedStyle}
 `;
 
-export const RunningIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+export const RunningIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
   let IconComponent;
   if (isCurrent) {
       IconComponent = RunningIconCurrent;
@@ -216,9 +222,10 @@ export const RunningIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
 })`
 ${iconStyle}
 ${({ isCurrent }) => isCurrent && boxShadowStyle}
+${({ highlighted }) => highlighted && highlightedStyle}
 `;
 
-export const WorkIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+export const WorkIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
   let IconComponent;
   if (isCurrent) {
       IconComponent = WorkIconCurrent;
@@ -232,9 +239,10 @@ export const WorkIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
 })`
 ${iconStyle}
 ${({ isCurrent }) => isCurrent && boxShadowStyle}
+${({ highlighted }) => highlighted && highlightedStyle}
 `;
 
-export const VocabIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+export const VocabIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
   let IconComponent;
   if (isCurrent) {
       IconComponent = VocabIconCurrent;
@@ -248,9 +256,10 @@ export const VocabIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
 })`
 ${iconStyle}
 ${({ isCurrent }) => isCurrent && boxShadowStyle}
+${({ highlighted }) => highlighted && highlightedStyle}
 `;
 
-export const ProjectIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
+export const ProjectIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
   let IconComponent;
   if (isCurrent) {
       IconComponent = ProjectIconCurrent;
@@ -264,4 +273,5 @@ export const ProjectIconStyle = styled(({ isCurrent, isFuture, ...props }) => {
 })`
 ${iconStyle}
 ${({ isCurrent }) => isCurrent && boxShadowStyle}
+${({ highlighted }) => highlighted && highlightedStyle}
 `;
