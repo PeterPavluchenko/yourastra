@@ -52,3 +52,19 @@ export const ActivityCircle = styled.div`
         transform: scale(1.5);
     }
 `;
+
+export const FutureActivityCircle = styled.div`
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, .3);    
+    transition: transform 0.3s ease-in-out;
+
+    &.highlighted {
+        filter: brightness(110%);
+        box-shadow: 0 0 3.5px 1.75px rgb(255, 255, 255, .025),
+                    0 0 6px 3.5px rgb(255, 0, 255, .025),
+                    0 0 9px 5px rgb(0, 255, 255, .025);
+        transform: scale(1.5);
+    }
+`;

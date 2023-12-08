@@ -38,13 +38,30 @@ const Auth = ({ handleLogin }) => {
         generateDays();
     }, [formData.year, formData.month]);
 
+    useEffect(() => {
+        // Load the Google Identity Services library
+        window.google.accounts.id.initialize({
+            client_id: '431690577384-silgugp7b00o8eu0gn390m89vs85gtql.apps.googleusercontent.com',
+            callback: onSignIn,
+        });
+    
+        // Render the Google sign-in button
+        window.google.accounts.id.renderButton(
+            document.getElementById('google-signin-button'), // Ensure this element is already loaded in the DOM
+            { theme: 'outline', size: 'large' }  // Customization attributes
+        );
+    
+        // Prompt the user to select an account.
+        window.google.accounts.id.prompt();
+    }, []);
+    
+
     const performLogin = async (username, password) => {
         try {
             const response = await axios.post('http://localhost:5000/api/auth/login', {
                 username,
                 password,
             });
-            console.log('Login Response:', response.data);
 
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -93,6 +110,30 @@ const Auth = ({ handleLogin }) => {
         { value: '11', label: 'November' }, { value: '12', label: 'December' },
     ];
 
+    const onSignIn = async (response) => {
+        try {
+            const res = await axios.post('http://localhost:5000/api/auth/google-login', {
+                tokenId: response.credential,
+            });
+            
+            // Save token and user details in local storage
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+    
+            // Handle login
+            handleLogin(res.data.user);
+    
+            // Navigate user to the desired page
+            if (res.data.user.isNewUser || !res.data.user.birthday) {
+                navigate('/birthday-form');
+            } else {
+                navigate('/life-in-years');
+            }
+        } catch (error) {
+            console.error('Error sending token to backend:', error);
+        }
+    };
+    
     return (
         <div className="form-box">
             <form className="form">
@@ -136,6 +177,8 @@ const Auth = ({ handleLogin }) => {
                         </div>
                     </div>
                 )}
+
+                <div id="google-signin-button" className="googleButton"></div>
             </form>
         </div>
     );

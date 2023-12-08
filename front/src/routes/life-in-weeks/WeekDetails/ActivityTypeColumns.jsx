@@ -7,7 +7,7 @@ import { ReactComponent as VocabTypeIcon } from "../../../assets/type-icons/voca
 import { ReactComponent as ProjectTypeIcon } from "../../../assets/type-icons/project-type-icon.svg";
 import { ReactComponent as OtherTypeIcon } from "../../../assets/type-icons/other-type-icon.svg";
 
-import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle } from './ActivityTypeColumnsStyles';
+import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle, FutureActivityCircle } from './ActivityTypeColumnsStyles';
 
 const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
     const IconComponent = {
@@ -29,7 +29,7 @@ const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
     ) : null;
 };
 
-const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
+const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, start, end }) => {
     const activityTypes = [...new Set(activities.map(activity => activity.type))];
     activityTypes.push('other');
 
@@ -40,6 +40,9 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
             return sum + (end - start);
         }, 0);
     };
+
+    console.log(start)
+    console.log(end)
 
     const totalWeekMillis = 168 * 60 * 60 * 1000;
     const remainingTimeMillis = totalWeekMillis - calculateTotalActivityTime();
@@ -53,7 +56,6 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
 
     const [tooltipVisible, setTooltipVisible] = useState(false);
     
-
     useEffect(() => {
         if (showTypeIconTooltip && tooltipRef.current) {
             const tooltipWidth = tooltipRef.current.offsetWidth;
@@ -112,36 +114,81 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover }) => {
     };
     
     const renderActivityCircles = (activities, type) => {
-        let totalMillis;
+        const currentTime = new Date().getTime();
+
+        const weekStartMillis = new Date(start).getTime();
+        const weekEndMillis = new Date(end).getTime();
+    
+        let pastMillis = 0;
+        let futureMillis = 0;
+    
         if (type === 'other') {
-            totalMillis = remainingTimeMillis;
+            if (weekStatus === "past") {
+                pastMillis = remainingTimeMillis; 
+            } else if (weekStatus === "future") {
+                futureMillis = remainingTimeMillis; 
+            } else {
+                pastMillis = currentTime - weekStartMillis;
+                futureMillis = weekEndMillis - currentTime;
+
+                activities.forEach(activity => {
+                    const startMillis = new Date(activity.startTime).getTime();
+                    const endMillis = new Date(activity.endTime).getTime();
+                    if (endMillis <= currentTime) {
+                        pastMillis -= (endMillis - startMillis);
+                    } else if (startMillis < currentTime) {
+                        pastMillis -= (currentTime - startMillis);
+                        futureMillis -= (endMillis - currentTime);
+                    } else {
+                        futureMillis -= (endMillis - startMillis);
+                    }
+                });
+            }
         } else {
-            totalMillis = activities
+            activities
                 .filter(activity => activity.type === type)
-                .reduce((sum, activity) => {
+                .forEach(activity => {
                     const start = new Date(activity.startTime).getTime();
                     const end = new Date(activity.endTime).getTime();
-                    return sum + (end - start);
-                }, 0);
+                    if (end <= currentTime) {
+                        pastMillis += (end - start);
+                    } else if (start < currentTime) {
+                        pastMillis += (currentTime - start);
+                        futureMillis += (end - currentTime);
+                    } else {
+                        futureMillis += (end - start);
+                    }
+                });
         }
-
-        const totalHours = Math.round(totalMillis / 3600000);
+    
+        const pastHours = Math.round(pastMillis / 3600000);
+        const futureHours = Math.round(futureMillis / 3600000);
+    
         const circles = [];
-        for (let i = 0; i < totalHours; i++) {
+        for (let i = 0; i < pastHours; i++) {
             circles.push(
                 <ActivityCircle
-                    key={`${type}-${i}`}
+                    key={`${type}-past-${i}`}
                     className={hoveredType === type ? 'highlighted' : ''} 
                 />
             );
         }
-
+        for (let i = 0; i < futureHours; i++) {
+            circles.push(
+                <FutureActivityCircle
+                    key={`${type}-future-${i}`}
+                    className={hoveredType === type ? 'highlighted' : ''} 
+                />
+            );
+        }
+    
         return (
             <ActivityCirclesContainer>
                 {circles}
             </ActivityCirclesContainer>
         );
     };
+    
 
     return (
         <ActivityTypesContainer>

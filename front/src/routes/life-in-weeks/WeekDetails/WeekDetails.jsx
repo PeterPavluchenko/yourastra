@@ -63,7 +63,7 @@ const WeekDetails = ({ user }) => {
         const weekEnd = new Date(weekStart.getTime());
         weekEnd.setDate(weekStart.getDate() + 6);
         weekEnd.setHours(23, 59, 59, 999);
-    
+
         return { start: weekStart, end: weekEnd };
     };
     
@@ -442,6 +442,24 @@ const WeekDetails = ({ user }) => {
         setHoveredActivityType(type);
     };
     
+    const getCurrentWeekIndex = (birthDate) => {
+        const now = new Date();
+        const start = new Date(birthDate);
+        start.setDate(start.getDate() - start.getDay() + 1);
+        const diff = Math.floor((now - start) / (7 * 24 * 60 * 60 * 1000));
+        return diff + 1;
+    };
+    
+    const currentWeekIndex = getCurrentWeekIndex(userBirthDate);
+
+    let weekStatus = 'present';
+
+    if (adjustedWeekIndex < currentWeekIndex) {
+        weekStatus = 'past';
+    } else if (adjustedWeekIndex > currentWeekIndex) {
+        weekStatus = 'future';
+    }
+
     return (
         <WeekDetailsWrapper>
             <WeekDetailsContainer className={transitionClass}>
@@ -502,6 +520,9 @@ const WeekDetails = ({ user }) => {
                 <ActivityTypeColumns 
                     activities={activities} 
                     onActivityTypeHover={highlightHoursByActivityType} 
+                    weekStatus={weekStatus}
+                    start={start}
+                    end={end}
                 />
                 {showActivityDetailsModal && (
                     <ActivityDetailsModal

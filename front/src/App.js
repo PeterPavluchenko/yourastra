@@ -13,6 +13,7 @@ import LifeInDays from './routes/life-in-days/life-in-days';
 import { GlobalStyle } from './styles/global-style';
 import LastFiveHundredThousandYears from './routes/last-five-hundred-thousand-years/last-five-hundred-thousand-years';
 import Auth from './components/auth/Auth';
+import BirthdayForm from './components/auth/BirthdayForm';
 import PrivateRoute from './PrivateRoute';
 
 function App() {
@@ -95,6 +96,7 @@ function App() {
             </PrivateRoute>
           } />
           <Route path="/auth" element={<Auth handleLogin={handleLogin} />} />
+          <Route path="/birthday-form" element={<BirthdayForm handleLogin={handleLogin} />} />
         </Routes>
       </div>
     </Router>
