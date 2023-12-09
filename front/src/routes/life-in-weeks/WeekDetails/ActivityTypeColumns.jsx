@@ -7,7 +7,7 @@ import { ReactComponent as VocabTypeIcon } from "../../../assets/type-icons/voca
 import { ReactComponent as ProjectTypeIcon } from "../../../assets/type-icons/project-type-icon.svg";
 import { ReactComponent as OtherTypeIcon } from "../../../assets/type-icons/other-type-icon.svg";
 
-import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle, FutureActivityCircle } from './ActivityTypeColumnsStyles';
+import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle, FutureActivityCircle, CurrentActivityCircle } from './ActivityTypeColumnsStyles';
 
 const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
     const IconComponent = {
@@ -29,7 +29,7 @@ const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
     ) : null;
 };
 
-const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, start, end }) => {
+const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, start, end, scrollContainerRef }) => {
     const activityTypes = [...new Set(activities.map(activity => activity.type))];
     activityTypes.push('other');
 
@@ -40,9 +40,6 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
             return sum + (end - start);
         }, 0);
     };
-
-    console.log(start)
-    console.log(end)
 
     const totalWeekMillis = 168 * 60 * 60 * 1000;
     const remainingTimeMillis = totalWeekMillis - calculateTotalActivityTime();
@@ -93,8 +90,10 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
         }
     
         const rect = event.currentTarget.getBoundingClientRect();
+        const scrollContainer = scrollContainerRef.current;
+        const containerScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
         const iconCenterX = rect.left + (rect.width / 2);
-        const y = rect.top - 125;
+        const y = rect.top + containerScrollTop - 125;
     
         setPosition({ x: iconCenterX, y });
         setShowTypeIconTooltip(true);
@@ -114,31 +113,44 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
     };
     
     const renderActivityCircles = (activities, type) => {
-        const currentTime = new Date().getTime();
+        const currentTime = new Date();
+        const timezoneOffsetMillis = currentTime.getTimezoneOffset() * 60000; // Convert minutes to milliseconds
+        const currentTimeUTC = new Date(currentTime.getTime() - timezoneOffsetMillis);
 
         const weekStartMillis = new Date(start).getTime();
         const weekEndMillis = new Date(end).getTime();
     
         let pastMillis = 0;
         let futureMillis = 0;
-    
+
+        let isCurrentActivity = false;
+        let isActivityHappeningNow = false;
+
+        activities.forEach(activity => {
+            const startMillis = new Date(activity.startTime).getTime();
+            const endMillis = new Date(activity.endTime).getTime();
+            if (startMillis <= currentTimeUTC && currentTimeUTC < endMillis) {
+                isActivityHappeningNow = true;
+            }
+        });
+
         if (type === 'other') {
             if (weekStatus === "past") {
                 pastMillis = remainingTimeMillis; 
             } else if (weekStatus === "future") {
                 futureMillis = remainingTimeMillis; 
             } else {
-                pastMillis = currentTime - weekStartMillis;
-                futureMillis = weekEndMillis - currentTime;
+                pastMillis = currentTimeUTC - weekStartMillis;
+                futureMillis = weekEndMillis - currentTimeUTC;
 
                 activities.forEach(activity => {
                     const startMillis = new Date(activity.startTime).getTime();
                     const endMillis = new Date(activity.endTime).getTime();
-                    if (endMillis <= currentTime) {
+                    if (endMillis <= currentTimeUTC) {
                         pastMillis -= (endMillis - startMillis);
-                    } else if (startMillis < currentTime) {
-                        pastMillis -= (currentTime - startMillis);
-                        futureMillis -= (endMillis - currentTime);
+                    } else if (startMillis < currentTimeUTC) {
+                        pastMillis -= (currentTimeUTC - startMillis);
+                        futureMillis -= (endMillis - currentTimeUTC);
                     } else {
                         futureMillis -= (endMillis - startMillis);
                     }
@@ -146,23 +158,34 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
             }
         } else {
             activities
-                .filter(activity => activity.type === type)
-                .forEach(activity => {
-                    const start = new Date(activity.startTime).getTime();
-                    const end = new Date(activity.endTime).getTime();
-                    if (end <= currentTime) {
-                        pastMillis += (end - start);
-                    } else if (start < currentTime) {
-                        pastMillis += (currentTime - start);
-                        futureMillis += (end - currentTime);
-                    } else {
-                        futureMillis += (end - start);
-                    }
-                });
+            .filter(activity => activity.type === type)
+            .forEach(activity => {
+                const startMillis = new Date(activity.startTime).getTime();
+                const endMillis = new Date(activity.endTime).getTime();
+
+                if (startMillis <= currentTimeUTC && currentTimeUTC < endMillis) {
+                    isCurrentActivity = true;
+                    console.log("startTime " + activity.startTime);
+                    console.log("endTime " + activity.endTime);
+                }
+
+                if (endMillis <= currentTimeUTC) {
+                    pastMillis += (endMillis - startMillis);
+                } else if (startMillis < currentTimeUTC) {
+                    pastMillis += (currentTimeUTC - startMillis);
+                    futureMillis += (endMillis - currentTimeUTC);
+                } else {
+                    futureMillis += (endMillis - startMillis);
+                }
+            });
         }
     
-        const pastHours = Math.round(pastMillis / 3600000);
-        const futureHours = Math.round(futureMillis / 3600000);
+        let pastHours = Math.round(pastMillis / 3600000);
+        let futureHours = Math.round(futureMillis / 3600000);
+
+        if (weekStatus === "present" && isCurrentActivity) {
+            futureHours -= 1;
+        }
     
         const circles = [];
         for (let i = 0; i < pastHours; i++) {
@@ -173,6 +196,26 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
                 />
             );
         }
+
+        if (type === 'other' && weekStatus === "present" && !isActivityHappeningNow) {
+            circles.push(
+                <CurrentActivityCircle
+                    key={`${type}-current`}
+                    className={hoveredType === type ? 'highlighted' : ''}
+                />
+            );
+            futureHours -= 1;
+        }
+
+        if (weekStatus === "present" && isCurrentActivity) {
+            circles.push(
+                <CurrentActivityCircle
+                    key={`${type}-current`}
+                    className={hoveredType === type ? 'highlighted' : ''}
+                />
+            );
+        }
+
         for (let i = 0; i < futureHours; i++) {
             circles.push(
                 <FutureActivityCircle

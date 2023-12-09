@@ -68,3 +68,16 @@ export const FutureActivityCircle = styled.div`
         transform: scale(1.5);
     }
 `;
+
+export const CurrentActivityCircle = styled.div`
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+    background-color: #fff;
+    box-shadow: var(--current-circle-glow);
+
+    &.highlighted {
+        transform: scale(1.5);
+    }
+`;

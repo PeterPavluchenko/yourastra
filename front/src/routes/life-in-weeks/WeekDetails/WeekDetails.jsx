@@ -42,6 +42,8 @@ const WeekDetails = ({ user }) => {
     const [activities, setActivities] = useState([]);
     const [highlightedHours, setHighlightedHours] = useState([]);
 
+    const scrollContainerRef = useRef(null);
+
     const isHourHighlighted = (hourIndex) => {
         hourIndex += 1;
         return highlightedHours.some(({ start, end }) => 
@@ -111,8 +113,10 @@ const WeekDetails = ({ user }) => {
         e.stopPropagation();
 
         const rect = e.currentTarget.getBoundingClientRect();
+        const scrollContainer = scrollContainerRef.current;
+        const containerScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
         const x = rect.left + (rect.width / 2);
-        const y = rect.top + window.scrollY - 130;
+        const y = rect.top + containerScrollTop - 130;
 
         const hourRangeStr = formatHourRange(hourIndex);
         setTooltipContent(hourRangeStr);
@@ -163,8 +167,10 @@ const WeekDetails = ({ user }) => {
 
         const button = e.currentTarget;
         const rect = button.getBoundingClientRect();
+        const scrollContainer = scrollContainerRef.current;
+        const containerScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
         const x = rect.left + (rect.width / 2);
-        const y = rect.top - 130;
+        const y = rect.top + containerScrollTop - 130;
 
         setTooltipContent(`Add something for week ${adjustedWeekIndex}`);
         setPosition({ x, y });
@@ -290,7 +296,10 @@ const WeekDetails = ({ user }) => {
 
         const formattedTooltip = formatActivityTooltip(activity);
         const rect = e.currentTarget.getBoundingClientRect();
-        setPosition({ x: rect.left + (rect.width / 2), y: rect.top + window.scrollY - 130});
+        const scrollContainer = scrollContainerRef.current;
+        const containerScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
+
+        setPosition({ x: rect.left + (rect.width / 2), y: rect.top + containerScrollTop - 130});
         setTooltipContent(formattedTooltip);
         
         setShowActivityTooltip(true);
@@ -460,8 +469,9 @@ const WeekDetails = ({ user }) => {
         weekStatus = 'future';
     }
 
+
     return (
-        <WeekDetailsWrapper>
+        <WeekDetailsWrapper ref={scrollContainerRef}>
             <WeekDetailsContainer className={transitionClass}>
                 <TitleContainer>
                     <ArrowButton onClick={goToPreviousWeek}>
@@ -523,6 +533,7 @@ const WeekDetails = ({ user }) => {
                     weekStatus={weekStatus}
                     start={start}
                     end={end}
+                    scrollContainerRef={scrollContainerRef}
                 />
                 {showActivityDetailsModal && (
                     <ActivityDetailsModal
