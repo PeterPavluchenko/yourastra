@@ -4,18 +4,21 @@ import { ReactComponent as RunningIcon } from "../../../assets/running-circle.sv
 import { ReactComponent as WorkIcon } from "../../../assets/work-circle.svg";
 import { ReactComponent as VocabIcon } from "../../../assets/vocab-circle.svg";
 import { ReactComponent as ProjectIcon } from "../../../assets/project-circle.svg";
+import { ReactComponent as SwimmingIcon } from "../../../assets/swimming-circle.svg";
 
 import { ReactComponent as SleepIconCurrent } from "../../../assets/circle-icons-current/sleep-circle-current.svg";
 import { ReactComponent as RunningIconCurrent } from "../../../assets/circle-icons-current/running-circle-current.svg";
 import { ReactComponent as WorkIconCurrent } from "../../../assets/circle-icons-current/work-circle-current.svg";
 import { ReactComponent as VocabIconCurrent } from "../../../assets/circle-icons-current/vocab-circle-current.svg";
 import { ReactComponent as ProjectIconCurrent } from "../../../assets/circle-icons-current/project-circle-current.svg";
+import { ReactComponent as SwimmingIconCurrent } from "../../../assets/circle-icons-current/swimming-circle-current.svg";
 
 import { ReactComponent as SleepIconFuture } from "../../../assets/circle-icons-future/sleep-circle-future.svg";
 import { ReactComponent as RunningIconFuture } from "../../../assets/circle-icons-future/running-circle-future.svg";
 import { ReactComponent as WorkIconFuture } from "../../../assets/circle-icons-future/work-circle-future.svg";
 import { ReactComponent as VocabIconFuture } from "../../../assets/circle-icons-future/vocab-circle-future.svg";
 import { ReactComponent as ProjectIconFuture } from "../../../assets/circle-icons-future/project-circle-future.svg";
+import { ReactComponent as SwimmingIconFuture } from "../../../assets/circle-icons-future/swimming-circle-future.svg";
 
 export const WeekDetailsWrapper = styled.div`
     overflow-x: hidden;
@@ -301,6 +304,23 @@ export const ProjectIconStyle = styled(({ isCurrent, isFuture, highlighted, ...p
       IconComponent = ProjectIconFuture;
   } else {
       IconComponent = ProjectIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${iconStyle}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const SwimmingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = SwimmingIconCurrent;
+  } else if (isFuture) {
+      IconComponent = SwimmingIconFuture;
+  } else {
+      IconComponent = SwimmingIcon;
   }
 
   return <IconComponent {...props} />;

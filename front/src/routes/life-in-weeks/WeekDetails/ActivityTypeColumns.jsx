@@ -5,6 +5,7 @@ import { ReactComponent as RunningTypeIcon } from "../../../assets/type-icons/ru
 import { ReactComponent as WorkTypeIcon } from "../../../assets/type-icons/work-type-icon.svg";
 import { ReactComponent as VocabTypeIcon } from "../../../assets/type-icons/vocab-type-icon.svg";
 import { ReactComponent as ProjectTypeIcon } from "../../../assets/type-icons/project-type-icon.svg";
+import { ReactComponent as SwimmingTypeIcon } from "../../../assets/type-icons/swimming-type-icon.svg";
 import { ReactComponent as OtherTypeIcon } from "../../../assets/type-icons/other-type-icon.svg";
 
 import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle, FutureActivityCircle, CurrentActivityCircle } from './ActivityTypeColumnsStyles';
@@ -16,6 +17,7 @@ const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
         work: WorkTypeIcon,
         vocabulary: VocabTypeIcon,
         project: ProjectTypeIcon,
+        swimming: SwimmingTypeIcon,
         other: OtherTypeIcon,
     }[type];
 

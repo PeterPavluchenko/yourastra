@@ -16,7 +16,8 @@ import {
     RunningIconStyle,
     WorkIconStyle,
     VocabIconStyle,
-    ProjectIconStyle
+    ProjectIconStyle,
+    SwimmingIconStyle
 } from './week-details.styles';
 import CustomTooltip from '../../../components/custom-tooltip/custom-tooltip';
 import { ReactComponent as PlusIcon } from "../../../assets/plus-icon.svg";
@@ -425,6 +426,7 @@ const WeekDetails = ({ user }) => {
             work: <WorkIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
             vocabulary: <VocabIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
             project: <ProjectIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            swimming: <SwimmingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
         };
 
         return components[type] || null;
