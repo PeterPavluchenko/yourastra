@@ -84,6 +84,7 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
     
         let tooltipText = '';
         const totalMinutes = Math.round(totalMillis / 60000);
+        
         if (totalMinutes < 60) {
             tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${totalMinutes} minute${totalMinutes === 1 ? '' : 's'}`;
         } else {

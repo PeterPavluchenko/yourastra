@@ -439,19 +439,40 @@ const WeekDetails = ({ user }) => {
             return;
         }
     
-        const hoursToHighlight = activities.reduce((acc, activity) => {
-            if (activity.type === type) {
+        if (type === 'other') {
+            const allActivityHours = activities.reduce((acc, activity) => {
                 const startHour = calculateHourIndex(activity.startTime);
                 const endHour = calculateHourIndex(activity.endTime);
-                acc.push({ start: startHour, end: endHour });
+                for (let hour = startHour; hour <= endHour; hour++) {
+                    acc.add(hour);
+                }
+                return acc;
+            }, new Set());
+    
+            const nonActivityHours = [];
+            for (let hour = 0; hour <= totalHours; hour++) { // Changed from < to <=
+                if (!allActivityHours.has(hour)) {
+                    nonActivityHours.push({ start: hour, end: hour });
+                }
             }
-            return acc;
-        }, []);
-
-        setHighlightedHours(hoursToHighlight);
-
+    
+            setHighlightedHours(nonActivityHours);
+        } else {
+            const hoursToHighlight = activities.reduce((acc, activity) => {
+                if (activity.type === type) {
+                    const startHour = calculateHourIndex(activity.startTime);
+                    const endHour = calculateHourIndex(activity.endTime);
+                    acc.push({ start: startHour, end: endHour });
+                }
+                return acc;
+            }, []);
+    
+            setHighlightedHours(hoursToHighlight);
+        }
+    
         setHoveredActivityType(type);
     };
+    
     
     const getCurrentWeekIndex = (birthDate) => {
         const now = new Date();
