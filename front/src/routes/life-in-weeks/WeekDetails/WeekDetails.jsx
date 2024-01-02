@@ -17,7 +17,10 @@ import {
     WorkIconStyle,
     VocabIconStyle,
     ProjectIconStyle,
-    SwimmingIconStyle
+    SwimmingIconStyle,
+    ResistanceIconStyle,
+    StretchingIconStyle,
+    FriendsIconStyle
 } from './week-details.styles';
 import CustomTooltip from '../../../components/custom-tooltip/custom-tooltip';
 import { ReactComponent as PlusIcon } from "../../../assets/plus-icon.svg";
@@ -42,6 +45,10 @@ const WeekDetails = ({ user }) => {
 
     const [activities, setActivities] = useState([]);
     const [highlightedHours, setHighlightedHours] = useState([]);
+
+    const [openModalType, setOpenModalType] = useState(null);
+
+    const [isActivityTypeModalOpen, setIsActivityTypeModalOpen] = useState(false);
 
     const scrollContainerRef = useRef(null);
 
@@ -304,16 +311,27 @@ const WeekDetails = ({ user }) => {
         setTooltipContent(formattedTooltip);
         
         setShowActivityTooltip(true);
-    
+
         const startHour = calculateHourIndex(activity.startTime);
-        const endHour = calculateHourIndex(activity.endTime);
+        const endHour = calculateHourIndex(activity.endTime, true);
 
         highlightHours(startHour, endHour);
     };
     
-    const calculateHourIndex = (dateTime) => {
+    const calculateHourIndex = (dateTime, isEndTime = false) => {
         const date = new Date(dateTime);
-        return Math.floor((date - start) / (3600000)); 
+        let hourIndex = Math.floor((date - start) / (3600000)); 
+    
+        if (isEndTime) {
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+    
+            if (minutes === 0 && seconds === 0) {
+                hourIndex -= 1;
+            }
+        }
+    
+        return hourIndex;
     };
 
     const highlightHours = (startHour, endHour) => {
@@ -361,28 +379,45 @@ const WeekDetails = ({ user }) => {
 
     const [modalHighlightedHours, setModalHighlightedHours] = useState({ start: null, end: null });
 
+    const [typeModalHighlightedHours, setTypeModalHighlightedHours] = useState([]);
+
     const handleActivityClick = (e, activity) => {
         const startHour = calculateHourIndex(activity.startTime);
-        const endHour = calculateHourIndex(activity.endTime);
+        const endHour = calculateHourIndex(activity.endTime, true);
         setModalHighlightedHours({ start: startHour, end: endHour });
 
-        const position = e.currentTarget.getBoundingClientRect();
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scrollContainer = scrollContainerRef.current;
+        const containerScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
+        const x = rect.left - (rect.width / 2);
+        const y = rect.top + containerScrollTop - 130;
+
+        console.log("rect.width: " + rect.width)
+        
         setSelectedActivity({
             ...activity,
             startHour: startHour,
             endHour: endHour
         });
         setActivityModalPosition({
-            top: position.top - 100,
-            left: position.left - (position.width / 2)
+            top: y,
+            left: x
         });
         setShowActivityDetailsModal(true);
         setShowAddActivityModal(false);
+
+        if (openModalType === 'activityTypeDetails') {
+            setIsActivityTypeModalOpen(false);
+            updateHighlightedHours([]);
+        }
+
+        setOpenModalType('activityDetails');
     };
 
     const closeActivityDetailsModal = () => {
         setShowActivityDetailsModal(false);
         setModalHighlightedHours({ start: null, end: null }); 
+        setOpenModalType(null);
     };
 
     useEffect(() => {
@@ -416,9 +451,10 @@ const WeekDetails = ({ user }) => {
     };
 
     const [hoveredActivityType, setHoveredActivityType] = useState(null);
+    const [selectedActivityType, setSelectedActivityType] = useState(null);
 
     const activityTypeToComponent = (type, isCurrent, isFuture) => {
-        const isHighlighted = type === hoveredActivityType;
+        const isHighlighted = (type === hoveredActivityType) || (selectedActivityType === type);
 
         const components = {
             sleep: <SleepIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
@@ -427,6 +463,9 @@ const WeekDetails = ({ user }) => {
             vocabulary: <VocabIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
             project: <ProjectIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
             swimming: <SwimmingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            resistance: <ResistanceIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            stretching: <StretchingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            friends: <FriendsIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
         };
 
         return components[type] || null;
@@ -442,7 +481,7 @@ const WeekDetails = ({ user }) => {
         if (type === 'other') {
             const allActivityHours = activities.reduce((acc, activity) => {
                 const startHour = calculateHourIndex(activity.startTime);
-                const endHour = calculateHourIndex(activity.endTime);
+                const endHour = calculateHourIndex(activity.endTime, true);
                 for (let hour = startHour; hour <= endHour; hour++) {
                     acc.add(hour);
                 }
@@ -450,7 +489,7 @@ const WeekDetails = ({ user }) => {
             }, new Set());
     
             const nonActivityHours = [];
-            for (let hour = 0; hour <= totalHours; hour++) { // Changed from < to <=
+            for (let hour = 0; hour <= totalHours; hour++) {
                 if (!allActivityHours.has(hour)) {
                     nonActivityHours.push({ start: hour, end: hour });
                 }
@@ -461,12 +500,11 @@ const WeekDetails = ({ user }) => {
             const hoursToHighlight = activities.reduce((acc, activity) => {
                 if (activity.type === type) {
                     const startHour = calculateHourIndex(activity.startTime);
-                    const endHour = calculateHourIndex(activity.endTime);
+                    const endHour = calculateHourIndex(activity.endTime, true);
                     acc.push({ start: startHour, end: endHour });
                 }
                 return acc;
             }, []);
-    
             setHighlightedHours(hoursToHighlight);
         }
     
@@ -492,7 +530,53 @@ const WeekDetails = ({ user }) => {
         weekStatus = 'future';
     }
 
+    const updateHighlightedHours = (type) => {
+        if (type === null) {
+            setHighlightedHours([]);
+            setSelectedActivityType(null);
+            return;
+        }
+    
+        if (type === 'other') {
+            const allActivityHours = activities.reduce((acc, activity) => {
+                const startHour = calculateHourIndex(activity.startTime);
+                const endHour = calculateHourIndex(activity.endTime, true);
+                for (let hour = startHour; hour <= endHour; hour++) {
+                    acc.add(hour);
+                }
+                return acc;
+            }, new Set());
+    
+            const nonActivityHours = [];
+            for (let hour = 0; hour <= totalHours; hour++) {
+                if (!allActivityHours.has(hour)) {
+                    nonActivityHours.push({ start: hour, end: hour });
+                }
+            }
+    
+            setTypeModalHighlightedHours(nonActivityHours);
+        } else {
+            const newHighlightedHours = activities
+                .filter(activity => activity.type === type)
+                .map(activity => ({
+                    start: calculateHourIndex(activity.startTime),
+                    end: calculateHourIndex(activity.endTime, true)
+                }));
+    
+            setTypeModalHighlightedHours(newHighlightedHours);
+        }
+    
+        setSelectedActivityType(type);
+    };
 
+    const handleActivityTypeModalOpen = () => {
+        if (openModalType === 'activityDetails') {
+            setShowActivityDetailsModal(false);
+            setModalHighlightedHours({ start: null, end: null }); 
+        }
+        setOpenModalType('activityTypeDetails');
+    };
+    
     return (
         <WeekDetailsWrapper ref={scrollContainerRef}>
             <WeekDetailsContainer className={transitionClass}>
@@ -512,7 +596,10 @@ const WeekDetails = ({ user }) => {
                         {Array.from({ length: totalHours }, (_, i) => {
                             const HourCircleComponent = getHourCircleComponent(i);
                             const isHighlighted = isHourHighlighted(i) || 
-                                                (i >= (modalHighlightedHours.start - 1) && i <= (modalHighlightedHours.end - 1));
+                                                (i >= (modalHighlightedHours.start - 1) && i <= (modalHighlightedHours.end - 1)) ||
+                                                typeModalHighlightedHours.some(highlight => 
+                                                    i >= (highlight.start - 1) && i <= (highlight.end - 1)
+                                                );
                             return (
                                 <HourCircleComponent 
                                     key={i}
@@ -557,6 +644,10 @@ const WeekDetails = ({ user }) => {
                     start={start}
                     end={end}
                     scrollContainerRef={scrollContainerRef}
+                    onUpdateHighlightedHours={updateHighlightedHours}
+                    onActivityTypeModalOpen={handleActivityTypeModalOpen}
+                    isModalOpen={isActivityTypeModalOpen}
+                    setIsModalOpen={setIsActivityTypeModalOpen}
                 />
                 {showActivityDetailsModal && (
                     <ActivityDetailsModal

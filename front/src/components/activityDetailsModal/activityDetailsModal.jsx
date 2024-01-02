@@ -5,7 +5,8 @@ import {
     GoBackButton,
     EditButton,
     DeleteButton,
-    ButtonContainer 
+    ButtonContainer, 
+    TypeDurationWrapper 
 } from './activityDetailsModalStyles';
 
 import EditActivityForm from './editActivityForm';
@@ -53,7 +54,7 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, s
         startDate.setTime(startDate.getTime() + userTimezoneOffset);
         endDate.setTime(endDate.getTime() + userTimezoneOffset);
 
-        const dateOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+        const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' };
         const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: false };
 
         let startTimeStr = startDate.toLocaleTimeString('en-US', timeOptions).replace(/^0(?=\d:)/, '');
@@ -66,8 +67,15 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, s
             endTimeStr = `0${endTimeStr.slice(2)}`;
         }
 
-        const dateStr = startDate.toLocaleDateString('en-US', dateOptions);
-        return `${dateStr}, ${startTimeStr} - ${endTimeStr}`;
+        const startDateStr = startDate.toLocaleDateString('en-US', dateOptions);
+        const endDateStr = endDate.toLocaleDateString('en-US', dateOptions);
+    
+        // Check if the activity spans multiple days
+        if (startDate.toDateString() === endDate.toDateString()) {
+            return `${startDateStr}, ${startTimeStr} - ${endTimeStr}`;
+        } else {
+            return `${startDateStr}, ${startTimeStr} - ${endDateStr}, ${endTimeStr}`;
+        }
     };
 
     const formatDuration = (startTime, endTime) => {
@@ -120,7 +128,10 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, s
 
             {!isEditMode ? (
                 <>
-                    <h2>{currentActivity.type.charAt(0).toUpperCase() + currentActivity.type.slice(1)}: {currentActivity.startHour} - {currentActivity.endHour} ({durationFormatted})</h2>
+                    <TypeDurationWrapper>
+                        <h2>{currentActivity.type.charAt(0).toUpperCase() + currentActivity.type.slice(1)}:</h2>
+                        <p>{durationFormatted}</p>
+                    </TypeDurationWrapper>
                     <p>{dateTimeRangeFormatted}</p>
                     <ButtonContainer>
                         <EditButton onClick={() => setIsEditMode(true)}>

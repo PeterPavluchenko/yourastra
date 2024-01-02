@@ -5,6 +5,9 @@ import { ReactComponent as WorkIcon } from "../../../assets/work-circle.svg";
 import { ReactComponent as VocabIcon } from "../../../assets/vocab-circle.svg";
 import { ReactComponent as ProjectIcon } from "../../../assets/project-circle.svg";
 import { ReactComponent as SwimmingIcon } from "../../../assets/swimming-circle.svg";
+import { ReactComponent as ResistanceIcon } from "../../../assets/resistance-circle.svg";
+import { ReactComponent as StretchingIcon } from "../../../assets/stretching-circle.svg";
+import { ReactComponent as FriendsIcon } from "../../../assets/friends-circle.svg";
 
 import { ReactComponent as SleepIconCurrent } from "../../../assets/circle-icons-current/sleep-circle-current.svg";
 import { ReactComponent as RunningIconCurrent } from "../../../assets/circle-icons-current/running-circle-current.svg";
@@ -12,6 +15,9 @@ import { ReactComponent as WorkIconCurrent } from "../../../assets/circle-icons-
 import { ReactComponent as VocabIconCurrent } from "../../../assets/circle-icons-current/vocab-circle-current.svg";
 import { ReactComponent as ProjectIconCurrent } from "../../../assets/circle-icons-current/project-circle-current.svg";
 import { ReactComponent as SwimmingIconCurrent } from "../../../assets/circle-icons-current/swimming-circle-current.svg";
+import { ReactComponent as ResistanceIconCurrent } from "../../../assets/circle-icons-current/resistance-circle-current.svg";
+import { ReactComponent as StretchingIconCurrent } from "../../../assets/circle-icons-current/stretching-circle-current.svg";
+import { ReactComponent as FriendsIconCurrent } from "../../../assets/circle-icons-current/friends-circle-current.svg";
 
 import { ReactComponent as SleepIconFuture } from "../../../assets/circle-icons-future/sleep-circle-future.svg";
 import { ReactComponent as RunningIconFuture } from "../../../assets/circle-icons-future/running-circle-future.svg";
@@ -19,6 +25,9 @@ import { ReactComponent as WorkIconFuture } from "../../../assets/circle-icons-f
 import { ReactComponent as VocabIconFuture } from "../../../assets/circle-icons-future/vocab-circle-future.svg";
 import { ReactComponent as ProjectIconFuture } from "../../../assets/circle-icons-future/project-circle-future.svg";
 import { ReactComponent as SwimmingIconFuture } from "../../../assets/circle-icons-future/swimming-circle-future.svg";
+import { ReactComponent as ResistanceIconFuture } from "../../../assets/circle-icons-future/resistance-circle-future.svg";
+import { ReactComponent as StretchingIconFuture } from "../../../assets/circle-icons-future/stretching-circle-future.svg";
+import { ReactComponent as FriendsIconFuture } from "../../../assets/circle-icons-future/friends-circle-future.svg";
 
 export const WeekDetailsWrapper = styled.div`
     overflow-x: hidden;
@@ -119,13 +128,16 @@ export const FutureHourCircle = styled(HourCircleBase)`
 
 export const WeekItems = styled.div`
     padding: 20px;
-    width: 1008px;
+    max-width: 1008px;
     margin: 25px auto 0;
     display: flex; 
     align-items: center; 
     gap: 10px; 
-    overflow-x: auto;
+    flex-wrap: wrap; 
+    justify-content: start;
+    overflow-x: hidden;
 `;
+
 
 
 export const AddNewBlockButton = styled.div`
@@ -176,16 +188,19 @@ const boxShadowStyle = `
     0 0 9px 5px rgba(0, 255, 255, 0.3);
 `;
 
-const iconStyle = `
+const iconStyle = ({ isCurrent, isFuture }) => `
   width: 30px; 
   height: 30px;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   cursor: pointer;
   border-radius: 50%;
 
   &:hover {
     transform: scale(1.2);
     filter: brightness(110%);
+    ${isCurrent ? '' : 
+      isFuture ? highlightedFutureShadow : 
+      highlightedPastShadow}
   }
 `;
 
@@ -196,9 +211,9 @@ const highlightedPastShadow = `
 `;
 
 const highlightedFutureShadow = `
-  box-shadow: 0 0 3.5px 1.75px rgba(255, 255, 255, 0.3),
-              0 0 6px 3.5px rgba(255, 0, 255, 0.3),
-              0 0 9px 5px rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 3.5px 1.75px rgba(255, 255, 255, 0.025),
+              0 0 6px 3.5px rgba(255, 0, 255, 0.025),
+              0 0 9px 5px rgba(0, 255, 255, 0.025);
 `;
 
 const highlightedCurrentShadow = `
@@ -239,7 +254,7 @@ export const SleepIconStyle = styled(({ isCurrent, isFuture, highlighted, ...pro
 
   return <IconComponent {...props} />;
 })`
-  ${iconStyle}
+  ${props => iconStyle(props)}
   ${({ isCurrent }) => isCurrent && boxShadowStyle}
   ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
 `;
@@ -257,7 +272,7 @@ export const RunningIconStyle = styled(({ isCurrent, isFuture, highlighted, ...p
 
   return <IconComponent {...props} />;
 })`
-  ${iconStyle}
+  ${props => iconStyle(props)}
   ${({ isCurrent }) => isCurrent && boxShadowStyle}
   ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
 `;
@@ -274,7 +289,7 @@ export const WorkIconStyle = styled(({ isCurrent, isFuture, highlighted, ...prop
 
   return <IconComponent {...props} />;
 })`
-  ${iconStyle}
+  ${props => iconStyle(props)}
   ${({ isCurrent }) => isCurrent && boxShadowStyle}
   ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
 `;
@@ -291,7 +306,7 @@ export const VocabIconStyle = styled(({ isCurrent, isFuture, highlighted, ...pro
 
   return <IconComponent {...props} />;
 })`
-  ${iconStyle}
+  ${props => iconStyle(props)}
   ${({ isCurrent }) => isCurrent && boxShadowStyle}
   ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
 `;
@@ -308,7 +323,7 @@ export const ProjectIconStyle = styled(({ isCurrent, isFuture, highlighted, ...p
 
   return <IconComponent {...props} />;
 })`
-  ${iconStyle}
+  ${props => iconStyle(props)}
   ${({ isCurrent }) => isCurrent && boxShadowStyle}
   ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
 `;
@@ -325,7 +340,58 @@ export const SwimmingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...
 
   return <IconComponent {...props} />;
 })`
-  ${iconStyle}
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const ResistanceIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = ResistanceIconCurrent;
+  } else if (isFuture) {
+      IconComponent = ResistanceIconFuture;
+  } else {
+      IconComponent = ResistanceIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const StretchingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = StretchingIconCurrent;
+  } else if (isFuture) {
+      IconComponent = StretchingIconFuture;
+  } else {
+      IconComponent = StretchingIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const FriendsIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = FriendsIconCurrent;
+  } else if (isFuture) {
+      IconComponent = FriendsIconFuture;
+  } else {
+      IconComponent = FriendsIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
   ${({ isCurrent }) => isCurrent && boxShadowStyle}
   ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
 `;

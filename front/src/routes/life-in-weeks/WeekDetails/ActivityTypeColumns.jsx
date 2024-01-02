@@ -6,32 +6,16 @@ import { ReactComponent as WorkTypeIcon } from "../../../assets/type-icons/work-
 import { ReactComponent as VocabTypeIcon } from "../../../assets/type-icons/vocab-type-icon.svg";
 import { ReactComponent as ProjectTypeIcon } from "../../../assets/type-icons/project-type-icon.svg";
 import { ReactComponent as SwimmingTypeIcon } from "../../../assets/type-icons/swimming-type-icon.svg";
+import { ReactComponent as ResistanceTypeIcon } from "../../../assets/type-icons/resistance-type-icon.svg";
+import { ReactComponent as StretchingTypeIcon } from "../../../assets/type-icons/stretching-type-icon.svg";
+import { ReactComponent as FriendsTypeIcon } from "../../../assets/type-icons/friends-type-icon.svg";
 import { ReactComponent as OtherTypeIcon } from "../../../assets/type-icons/other-type-icon.svg";
 
 import { ActivityTypesContainer, ActivityTypeColumn, ActivityIcon, ActivityCirclesContainer, ActivityCircle, FutureActivityCircle, CurrentActivityCircle } from './ActivityTypeColumnsStyles';
 
-const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
-    const IconComponent = {
-        sleep: SleepTypeIcon,
-        running: RunningTypeIcon,
-        work: WorkTypeIcon,
-        vocabulary: VocabTypeIcon,
-        project: ProjectTypeIcon,
-        swimming: SwimmingTypeIcon,
-        other: OtherTypeIcon,
-    }[type];
+import ActivityTypeDetailsModal from '../../../components/activityTypeDetailsModal/activityTypeDetailsModal';
 
-    return IconComponent ? (
-        <ActivityIcon
-            onMouseOver={(e) => handleMouseOver(e, type)}
-            onMouseOut={handleMouseOut}
-        >
-            <IconComponent />
-        </ActivityIcon>
-    ) : null;
-};
-
-const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, start, end, scrollContainerRef }) => {
+const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, start, end, scrollContainerRef, onUpdateHighlightedHours, onActivityTypeModalOpen, isModalOpen, setIsModalOpen }) => {
     const activityTypes = [...new Set(activities.map(activity => activity.type))];
     activityTypes.push('other');
 
@@ -45,6 +29,9 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
 
     const totalWeekMillis = 168 * 60 * 60 * 1000;
     const remainingTimeMillis = totalWeekMillis - calculateTotalActivityTime();
+
+    const [modalContent, setModalContent] = useState({ type: '', duration: '' });
+    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
 
     const [hoveredType, setHoveredType] = useState(null);
 
@@ -86,10 +73,10 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
         const totalMinutes = Math.round(totalMillis / 60000);
         
         if (totalMinutes < 60) {
-            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${totalMinutes} minute${totalMinutes === 1 ? '' : 's'}`;
+            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${totalMinutes}m`;
         } else {
             const hours = Math.floor(totalMinutes / 60);
-            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${hours} hour${hours === 1 ? '' : 's'}`;
+            tooltipText = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${hours}h`;
         }
     
         const rect = event.currentTarget.getBoundingClientRect();
@@ -168,8 +155,6 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
 
                 if (startMillis <= currentTimeUTC && currentTimeUTC < endMillis) {
                     isCurrentActivity = true;
-                    console.log("startTime " + activity.startTime);
-                    console.log("endTime " + activity.endTime);
                 }
 
                 if (endMillis <= currentTimeUTC) {
@@ -189,18 +174,30 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
         if (weekStatus === "present" && isCurrentActivity) {
             futureHours -= 1;
         }
-    
+
         const circles = [];
-        for (let i = 0; i < pastHours; i++) {
+
+        if (pastHours > 1 || (pastHours === 1 && isCurrentActivity !== true)) {
+            for (let i = 0; i < pastHours; i++) {
+                circles.push(
+                    <ActivityCircle
+                        key={`${type}-past-${i}`}
+                        className={hoveredType === type ? 'highlighted' : ''} 
+                    />
+                );
+            }
+        }
+
+        if (circles.length === 0 && pastMillis > 0 && type !== "other" && isCurrentActivity !== true) {
             circles.push(
                 <ActivityCircle
-                    key={`${type}-past-${i}`}
-                    className={hoveredType === type ? 'highlighted' : ''} 
+                    key={`${type}-past-0`}
+                    className={hoveredType === type ? 'highlighted' : ''}
                 />
             );
         }
 
-        if (type === 'other' && weekStatus === "present" && !isActivityHappeningNow) {
+        if ((type === 'other' && weekStatus === "present" && !isActivityHappeningNow) || (weekStatus === "present" && isCurrentActivity)) {
             circles.push(
                 <CurrentActivityCircle
                     key={`${type}-current`}
@@ -208,15 +205,6 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
                 />
             );
             futureHours -= 1;
-        }
-
-        if (weekStatus === "present" && isCurrentActivity) {
-            circles.push(
-                <CurrentActivityCircle
-                    key={`${type}-current`}
-                    className={hoveredType === type ? 'highlighted' : ''}
-                />
-            );
         }
 
         for (let i = 0; i < futureHours; i++) {
@@ -234,8 +222,84 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
             </ActivityCirclesContainer>
         );
     };
-    
 
+    const getActivityTypeIcon = (type, handleMouseOver, handleMouseOut) => {
+        const IconComponent = {
+            sleep: SleepTypeIcon,
+            running: RunningTypeIcon,
+            work: WorkTypeIcon,
+            vocabulary: VocabTypeIcon,
+            project: ProjectTypeIcon,
+            swimming: SwimmingTypeIcon,
+            resistance: ResistanceTypeIcon,
+            stretching: StretchingTypeIcon,
+            friends: FriendsTypeIcon,
+            other: OtherTypeIcon,
+        }[type];
+    
+        return IconComponent ? (
+            <ActivityIcon
+                onMouseOver={(e) => handleMouseOver(e, type)}
+                onMouseOut={handleMouseOut}
+                onClick={(e) => handleIconClick(e, type)}
+            >
+                <IconComponent />
+            </ActivityIcon>
+        ) : null;
+    };
+
+    const handleIconClick = (e, type) => {
+        let totalMillis;
+
+        if (type === 'other') {
+            // Calculate the total time spent on all activities
+            const totalActivityTime = activities.reduce((sum, activity) => {
+                const start = new Date(activity.startTime).getTime();
+                const end = new Date(activity.endTime).getTime();
+                return sum + (end - start);
+            }, 0);
+
+            // Total time in a week in milliseconds
+            const totalWeekMillis = 168 * 60 * 60 * 1000;
+
+            // Calculate remaining time
+            totalMillis = totalWeekMillis - totalActivityTime;
+        } else {
+            totalMillis = activities
+                .filter(activity => activity.type === type)
+                .reduce((sum, activity) => {
+                    const start = new Date(activity.startTime).getTime();
+                    const end = new Date(activity.endTime).getTime();
+                    return sum + (end - start);
+                }, 0);
+        }
+
+        const totalMinutes = Math.round(totalMillis / 60000);
+        let durationText = '';
+        if (totalMinutes < 60) {
+            durationText = `${totalMinutes}m`;
+        } else {
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            durationText = `${hours}h`;
+            if (minutes > 0) {
+                durationText += ` ${minutes}m`;
+            }
+        }
+    
+        setModalContent({ type: `${type.charAt(0).toUpperCase() + type.slice(1)}`, duration: durationText });
+        const position = e.currentTarget.getBoundingClientRect();
+        setModalPosition({
+            top: position.top - 100,
+            left: position.left - (position.width / 2)
+        });
+
+        onUpdateHighlightedHours(type);
+        setIsModalOpen(true);
+        onActivityTypeModalOpen();
+    };
+    
+    
     return (
         <ActivityTypesContainer>
             {activityTypes.map(type => (
@@ -251,6 +315,17 @@ const ActivityTypeColumns = ({ activities, onActivityTypeHover, weekStatus, star
                     position={position} 
                     isVisible={tooltipVisible}
             />}
+            {isModalOpen && (
+                <ActivityTypeDetailsModal
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        onUpdateHighlightedHours([]); 
+                    }}
+                    position={modalPosition}
+                    type={modalContent.type}
+                    duration={modalContent.duration}
+                />
+            )}
         </ActivityTypesContainer>
     );
 };

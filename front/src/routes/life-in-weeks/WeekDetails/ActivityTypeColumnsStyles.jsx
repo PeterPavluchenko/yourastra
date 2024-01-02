@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export const ActivityTypesContainer = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     margin-top: 35px;
     width: 1008px;
     margin: 35px auto 0;
@@ -13,6 +14,9 @@ export const ActivityTypeColumn = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: calc(1008px / 10 - 10px);
+    margin-right: 10px;
+    margin-bottom: 10px;
 `;
 
 export const ActivityIcon = styled.div`

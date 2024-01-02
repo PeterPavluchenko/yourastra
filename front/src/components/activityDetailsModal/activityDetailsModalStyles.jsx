@@ -32,6 +32,7 @@ export const CloseButton = styled.div`
   }
 `;
 
+
 export const GoBackButton = styled.div`
   position: absolute;
   top: 10px;
@@ -48,6 +49,7 @@ export const GoBackButton = styled.div`
     filter: brightness(120%);
   }
 `;
+
 
 export const EditButton = styled.button`
   background: transparent;
@@ -116,4 +118,21 @@ export const SaveButton = styled.button`
 
 export const StyledForm = styled.form`
   padding-top: 15px;
+`;
+
+export const TypeDurationWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  h2 {
+    margin: 20px 8px 0 0;
+    font-weight: 300;
+    text-align: left;
+  }
+
+  p {
+    font-size: 18px;
+    margin: 25px 0 0 0;
+  }
 `;

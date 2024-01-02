@@ -124,6 +124,9 @@ const ActivityModal = ({ onClose, position, weekStartDate, onActivitySave }) => 
                         <option value="vocabulary">Vocabulary</option>
                         <option value="project">Project</option>
                         <option value="swimming">Swimming</option>
+                        <option value="resistance">Resistance training</option>
+                        <option value="stretching">Stretching</option>
+                        <option value="friends">Friends</option>
                     </ModalSelect>
                     {selected && <ModalButton onClick={handleContinue}>Continue</ModalButton>}
                 </>
