@@ -117,6 +117,11 @@ const EditActivityForm = ({ activity, setEditMode, onEditSuccess }) => {
                 <option value="resistance">Resistance training</option>
                 <option value="stretching">Stretching</option>
                 <option value="friends">Friends</option>
+                <option value="walking">Walking</option>
+                <option value="family">Family</option>
+                <option value="cooking">Cooking</option>
+                <option value="eating">Eating</option>
+                <option value="reading">Reading</option>
             </ModalSelect>
 
             <p>Start Time:</p>

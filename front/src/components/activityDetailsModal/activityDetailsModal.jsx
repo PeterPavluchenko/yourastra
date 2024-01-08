@@ -16,7 +16,7 @@ import { ReactComponent as GoBackIcon } from "../../assets/arrow-go-back.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/delete-icon.svg";
 import { ReactComponent as EditIcon } from "../../assets/edit-icon.svg";
 
-const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, setModalHighlightedHours }) => {
+const ActivityDetailsModal = React.forwardRef(({ activity, onClose, onRefresh, position, start, setModalHighlightedHours }, ref) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentActivity, setCurrentActivity] = useState(activity);
     const [durationFormatted, setDurationFormatted] = useState('');
@@ -115,7 +115,7 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, s
     };
 
     return (
-        <DetailsModalWrapper style={{ top: position.top, left: position.left }}>
+        <DetailsModalWrapper style={{ top: position.top, left: position.left }} ref={ref}>
             <CloseButton>
                 <CloseIcon onClick={onClose} />
             </CloseButton>
@@ -147,6 +147,6 @@ const ActivityDetailsModal = ({ activity, onClose, onRefresh, position, start, s
             )}
         </DetailsModalWrapper>
     );
-};
+});
 
 export default ActivityDetailsModal;

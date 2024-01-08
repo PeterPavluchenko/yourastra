@@ -20,7 +20,12 @@ import {
     SwimmingIconStyle,
     ResistanceIconStyle,
     StretchingIconStyle,
-    FriendsIconStyle
+    FriendsIconStyle,
+    WalkingIconStyle,
+    FamilyIconStyle,
+    CookingIconStyle,
+    EatingIconStyle,
+    ReadingIconStyle
 } from './week-details.styles';
 import CustomTooltip from '../../../components/custom-tooltip/custom-tooltip';
 import { ReactComponent as PlusIcon } from "../../../assets/plus-icon.svg";
@@ -234,13 +239,14 @@ const WeekDetails = ({ user }) => {
 
     const [showAddActivityModal, setShowAddActivityModal] = useState(false);
     const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-    const addButtonRef = useRef(null);
 
-    const handleAddButtonClick = () => {
-        if (addButtonRef.current) {
-            const position = addButtonRef.current.getBoundingClientRect();
-            setModalPosition({ top: position.top - 100, left: position.left - 85 });
-        }
+    const handleAddButtonClick = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scrollContainer = scrollContainerRef.current;
+        const containerScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
+        const x = rect.left - (rect.width / 2);
+        const y = rect.top + containerScrollTop - 130;
+        setModalPosition({ top: y, left: x });
         setShowAddActivityModal(true);
         setShowActivityDetailsModal(false);
     };
@@ -392,8 +398,6 @@ const WeekDetails = ({ user }) => {
         const x = rect.left - (rect.width / 2);
         const y = rect.top + containerScrollTop - 130;
 
-        console.log("rect.width: " + rect.width)
-        
         setSelectedActivity({
             ...activity,
             startHour: startHour,
@@ -466,6 +470,11 @@ const WeekDetails = ({ user }) => {
             resistance: <ResistanceIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
             stretching: <StretchingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
             friends: <FriendsIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            walking: <WalkingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            family: <FamilyIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            cooking: <CookingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            eating: <EatingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
+            reading: <ReadingIconStyle isCurrent={isCurrent} isFuture={isFuture} highlighted={isHighlighted} />,
         };
 
         return components[type] || null;
@@ -630,7 +639,7 @@ const WeekDetails = ({ user }) => {
                             </div>
                         )
                     })}
-                    <AddNewBlockButton ref={addButtonRef} onClick={handleAddButtonClick}>
+                    <AddNewBlockButton onClick={(e) => handleAddButtonClick(e)}>
                         <PlusIcon 
                             onMouseOver={handleButtonMouseOver} 
                             onMouseOut={handleButtonMouseOut}

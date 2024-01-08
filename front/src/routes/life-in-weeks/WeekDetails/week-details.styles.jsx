@@ -8,6 +8,11 @@ import { ReactComponent as SwimmingIcon } from "../../../assets/swimming-circle.
 import { ReactComponent as ResistanceIcon } from "../../../assets/resistance-circle.svg";
 import { ReactComponent as StretchingIcon } from "../../../assets/stretching-circle.svg";
 import { ReactComponent as FriendsIcon } from "../../../assets/friends-circle.svg";
+import { ReactComponent as WalkingIcon } from "../../../assets/walking-circle.svg";
+import { ReactComponent as FamilyIcon } from "../../../assets/family-circle.svg";
+import { ReactComponent as CookingIcon } from "../../../assets/cooking-circle.svg";
+import { ReactComponent as EatingIcon } from "../../../assets/eating-circle.svg";
+import { ReactComponent as ReadingIcon } from "../../../assets/reading-circle.svg";
 
 import { ReactComponent as SleepIconCurrent } from "../../../assets/circle-icons-current/sleep-circle-current.svg";
 import { ReactComponent as RunningIconCurrent } from "../../../assets/circle-icons-current/running-circle-current.svg";
@@ -18,6 +23,11 @@ import { ReactComponent as SwimmingIconCurrent } from "../../../assets/circle-ic
 import { ReactComponent as ResistanceIconCurrent } from "../../../assets/circle-icons-current/resistance-circle-current.svg";
 import { ReactComponent as StretchingIconCurrent } from "../../../assets/circle-icons-current/stretching-circle-current.svg";
 import { ReactComponent as FriendsIconCurrent } from "../../../assets/circle-icons-current/friends-circle-current.svg";
+import { ReactComponent as WalkingIconCurrent } from "../../../assets/circle-icons-current/walking-circle-current.svg";
+import { ReactComponent as FamilyIconCurrent } from "../../../assets/circle-icons-current/family-circle-current.svg";
+import { ReactComponent as CookingIconCurrent } from "../../../assets/circle-icons-current/cooking-circle-current.svg";
+import { ReactComponent as EatingIconCurrent } from "../../../assets/circle-icons-current/eating-circle-current.svg";
+import { ReactComponent as ReadingIconCurrent } from "../../../assets/circle-icons-current/reading-circle-current.svg";
 
 import { ReactComponent as SleepIconFuture } from "../../../assets/circle-icons-future/sleep-circle-future.svg";
 import { ReactComponent as RunningIconFuture } from "../../../assets/circle-icons-future/running-circle-future.svg";
@@ -28,12 +38,18 @@ import { ReactComponent as SwimmingIconFuture } from "../../../assets/circle-ico
 import { ReactComponent as ResistanceIconFuture } from "../../../assets/circle-icons-future/resistance-circle-future.svg";
 import { ReactComponent as StretchingIconFuture } from "../../../assets/circle-icons-future/stretching-circle-future.svg";
 import { ReactComponent as FriendsIconFuture } from "../../../assets/circle-icons-future/friends-circle-future.svg";
+import { ReactComponent as WalkingIconFuture } from "../../../assets/circle-icons-future/walking-circle-future.svg";
+import { ReactComponent as FamilyIconFuture } from "../../../assets/circle-icons-future/family-circle-future.svg";
+import { ReactComponent as CookingIconFuture } from "../../../assets/circle-icons-future/cooking-circle-future.svg";
+import { ReactComponent as EatingIconFuture } from "../../../assets/circle-icons-future/eating-circle-future.svg";
+import { ReactComponent as ReadingIconFuture } from "../../../assets/circle-icons-future/reading-circle-future.svg";
 
 export const WeekDetailsWrapper = styled.div`
     overflow-x: hidden;
     width: 100%;
     margin: 0 auto;
-    height: 85vh;
+    height: 100vh;
+    padding-bottom: 50px;
 `;
 
 export const WeekDetailsContainer = styled.div`
@@ -387,6 +403,91 @@ export const FriendsIconStyle = styled(({ isCurrent, isFuture, highlighted, ...p
       IconComponent = FriendsIconFuture;
   } else {
       IconComponent = FriendsIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const WalkingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = WalkingIconCurrent;
+  } else if (isFuture) {
+      IconComponent = WalkingIconFuture;
+  } else {
+      IconComponent = WalkingIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const FamilyIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = FamilyIconCurrent;
+  } else if (isFuture) {
+      IconComponent = FamilyIconFuture;
+  } else {
+      IconComponent = FamilyIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const CookingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = CookingIconCurrent;
+  } else if (isFuture) {
+      IconComponent = CookingIconFuture;
+  } else {
+      IconComponent = CookingIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const EatingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = EatingIconCurrent;
+  } else if (isFuture) {
+      IconComponent = EatingIconFuture;
+  } else {
+      IconComponent = EatingIcon;
+  }
+
+  return <IconComponent {...props} />;
+})`
+  ${props => iconStyle(props)}
+  ${({ isCurrent }) => isCurrent && boxShadowStyle}
+  ${({ highlighted, isCurrent, isFuture }) => highlighted && highlightedStyle(isCurrent, isFuture)}
+`;
+
+export const ReadingIconStyle = styled(({ isCurrent, isFuture, highlighted, ...props }) => {
+  let IconComponent;
+  if (isCurrent) {
+      IconComponent = ReadingIconCurrent;
+  } else if (isFuture) {
+      IconComponent = ReadingIconFuture;
+  } else {
+      IconComponent = ReadingIcon;
   }
 
   return <IconComponent {...props} />;

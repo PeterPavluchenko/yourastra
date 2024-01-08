@@ -14,7 +14,7 @@ export const ActivityTypeColumn = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: calc(1008px / 10 - 10px);
+    width: calc(1008px / 15 - 10px);
     margin-right: 10px;
     margin-bottom: 10px;
 `;
