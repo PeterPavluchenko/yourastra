@@ -48,10 +48,9 @@ export const WeekDetailsWrapper = styled.div`
     overflow-x: hidden;
     width: 100%;
     margin: 0 auto;
-    height: 100vh;
-    padding-bottom: 50px;
+    height: 85vh;
 `;
-
+  
 export const WeekDetailsContainer = styled.div`
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   opacity: 1;
